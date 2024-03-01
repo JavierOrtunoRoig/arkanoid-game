@@ -19,6 +19,13 @@ const stickVelocity = 20;
 const stickY = canvasHeight - stickHeight - 50;
 let stickX = (canvasWidth - stickWidth) / 2;
 
+/* BALL VARIABLES */
+const ballRadius = 10;
+let ballX = stickX + stickWidth / 2;
+let ballY = stickY - 11;
+let dx = 5;
+let dy = -5;
+
 // add moving stick
 document.addEventListener('keydown', function(event) {
   console.log(event);
@@ -29,12 +36,19 @@ document.addEventListener('keydown', function(event) {
   }
 });
 
-
 function drawStick() {
   const stickWidth = 100;
   const stickHeight = 10;
   ctx.fillStyle = stickColor;
   ctx.fillRect(stickX, stickY, stickWidth, stickHeight);
+}
+
+const drawBall = () => {
+  ctx.fillStyle = ballColor;
+  ctx.beginPath();
+  ctx.arc(ballX, ballY, 10, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.closePath();
 }
 
 function cleanCanvas() {
@@ -50,6 +64,17 @@ function drawUI() {
   ctx.fillText(`FPS: ${framesPerSec}`, 5, 10)
 }
 
+function updateBallPosition() {
+  if (ballX + dx > canvasWidth - ballRadius || ballX + dx < ballRadius) {
+    dx *= -1;
+  }
+  if (ballY + dy < ballRadius) {
+    dy *= -1;
+  }
+
+  ballX += dx;
+  ballY += dy;
+}
 
 // a que velocidad de fps queremos que renderice nuestro juego
 const fps = 60
@@ -65,26 +90,26 @@ function draw() {
 
   const msNow = window.performance.now()
   const msPassed = msNow - msPrev;
-
   
   if (msPassed < msPerFrame) return
   
   const excessTime = msPassed % msPerFrame
   msPrev = msNow - excessTime
-  
   frames++
-  
-  console.log({msFPSPrev, msNow});
   if (msFPSPrev < msNow) {
     msFPSPrev = window.performance.now() + 1000
     framesPerSec = frames;
     frames = 0;
   }
 
+  updateBallPosition();
   cleanCanvas();
   drawBG();
   drawStick();
+  drawBall();
   drawUI()
 }
 
 draw()
+
+
