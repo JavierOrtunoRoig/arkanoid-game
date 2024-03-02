@@ -1,3 +1,4 @@
+import { Stick } from './Stick';
 import { createHiDPICanvas } from './helpers';
 import './style.css'
 
@@ -20,24 +21,16 @@ const ctx = canvas.getContext('2d') as unknown as CanvasRenderingContext2D;
 const canvasWidth = canvas.width;
 const canvasHeight = canvas.height;
 const bgColor = '#2C3333';
-const stickColor = '#395B64';
 const scoreColor = '#E7F6F2';
 const ballColor = '#FFF';
 const bricksColor = '#A5C9CA';
 
-/* STICK VARIABLES */
-const stickWidth = 100;
-const stickHeight = 10;
-const stickVelocity = 10;
-let moveStickLeft = false;
-let moveStickRight = false;
-const stickY = canvasHeight - stickHeight - 50;
-let stickX = (canvasWidth - stickWidth) / 2;
+const stick = new Stick(canvasWidth, canvasHeight);
 
 /* BALL VARIABLES */
 const ballRadius = 10;
-let ballX = stickX + stickWidth / 2;
-let ballY = stickY - 11;
+let ballX = stick.getX() + stick.getWidth() / 2;
+let ballY = stick.getY() - 11;
 let dx = 10;
 let dy = -10;
 
@@ -77,44 +70,12 @@ function drawBricks() {
   }
 }
 
-// add moving stick
-document.addEventListener('keydown', function(event) {
-  if (event.key === 'ArrowRight') {
-    moveStickRight = true;
-  } else if (event.key === 'ArrowLeft') {
-    moveStickLeft = true;
-  }
-});
-
-document.addEventListener('keyup', function(event) {
-  if (event.key === 'ArrowRight') {
-    moveStickRight = false;
-  } else if (event.key === 'ArrowLeft') {
-    moveStickLeft = false;
-  }
-});
-
-function drawStick() {
-  const stickWidth = 100;
-  const stickHeight = 10;
-  ctx.fillStyle = stickColor;
-  ctx.fillRect(stickX, stickY, stickWidth, stickHeight);
-}
-
 const drawBall = () => {
   ctx.fillStyle = ballColor;
   ctx.beginPath();
   ctx.arc(ballX, ballY, 10, 0, Math.PI * 2);
   ctx.fill();
   ctx.closePath();
-}
-
-const moveStick = () => {
-  if (moveStickLeft && stickX > 10) {
-    stickX -= stickVelocity;
-  } else if (moveStickRight && stickX + stickWidth < canvasWidth - 10) {
-    stickX += stickVelocity;
-  }
 }
 
 function cleanCanvas() {
@@ -146,14 +107,14 @@ function checkCollision() {
   const bottomBall = ballY + ballRadius;
   const lefBall = ballX - ballRadius;
   const rightBall = ballX + ballRadius;
-  const topStick = stickY - stickHeight / 2;
-  const leftStick = stickX;
-  const rightStick = stickX + stickWidth;
+  const topStick = stick.getY() - stick.getHeight() / 2;
+  const leftStick = stick.getX();
+  const rightStick = stick.getX() + stick.getWidth()
 
   if (leftStick <= rightBall && lefBall <= rightStick &&  bottomBall > topStick) {
     // add angle to the ball
-    const middleStick = stickX + stickWidth / 2;
-    const angle = (ballX - middleStick) / stickWidth;
+    const middleStick = stick.getX(); + stick.getWidth() / 2;
+    const angle = (ballX - middleStick) / stick.getWidth();
     dx = 20 * angle;
     dy *= -1;
   } else if (bottomBall > canvasHeight) {
@@ -211,12 +172,12 @@ function draw() {
   cleanCanvas();
 
   drawBG();
-  drawStick();
+  stick.draw(ctx);
   drawBall();
   drawBricks();
   drawUI()
   
-  moveStick();
+  stick.moveStick(canvasWidth);
   moveBall();
 
   checkCollision();
