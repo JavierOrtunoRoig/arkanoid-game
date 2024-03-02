@@ -1,6 +1,6 @@
 import { Ball } from './Ball';
+import { Canvas } from './Canvas';
 import { Stick } from './Stick';
-import { createHiDPICanvas } from './helpers';
 import './style.css';
 
 interface Brick {
@@ -9,20 +9,13 @@ interface Brick {
   status: number;
 }
 
-/* Create Arcade game */
-let width = 1000;
-console.log(window.innerWidth);
-if (window.innerWidth < 600) {
-  width = window.innerWidth;
-}
-
 let gameOver = false;
-const canvas = createHiDPICanvas(width, window.innerHeight);
-const ctx = canvas.getContext('2d') as unknown as CanvasRenderingContext2D;
-const canvasWidth = canvas.width;
-const canvasHeight = canvas.height;
-const bgColor = '#2C3333';
-const scoreColor = '#E7F6F2';
+const canvas = new Canvas();
+const ctx = canvas.getCtx();
+const canvasWidth = canvas.getWidth();
+const canvasHeight = canvas.getHeight();
+
+let score = 0;
 const bricksColor = '#A5C9CA';
 
 const stick = new Stick(canvasWidth, canvasHeight);
@@ -37,7 +30,7 @@ const brickPadding = 3;
 const brickOffsetTop = 30;
 // const brickOffsetLeft = 30;
 const bricks: Brick[][] = [];
-const extraSpace = width - (brickColumnCount * (brickWidth + brickPadding)) - brickPadding;
+const extraSpace = canvas.getWidth() - (brickColumnCount * (brickWidth + brickPadding)) - brickPadding;
 const brickOffsetLeft = extraSpace / 2;
 
 for (let c = 0; c < brickColumnCount; c++) {
@@ -64,19 +57,6 @@ function drawBricks() {
   }
 }
 
-function cleanCanvas() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-function drawBG() {
-  ctx.fillStyle = bgColor;
-  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-}
-
-function drawUI() {
-  ctx.fillText(`FPS: ${framesPerSec}`, 5, 10);
-}
-
 function checkCollision() {
   const bottomBall = ball.getY() + ball.getRadius();
   const lefBall = ball.getX() - ball.getRadius();
@@ -92,7 +72,7 @@ function checkCollision() {
     ball.setDx(20 * angle);
     ball.setDy(-ball.getDy());
   } else if (bottomBall > canvasHeight) {
-    alert('GAME OVER');
+    alert(`GAME OVER. Your score is: ${score}`);
     document.location.reload();
     gameOver = true;
   }
@@ -110,6 +90,7 @@ function checkCollision() {
         ) {
           ball.setDy(-ball.getDy());
           brick.status = 0;
+          score++;
         }
       }
     }
@@ -143,13 +124,12 @@ function draw() {
     frames = 0;
   }
 
-  cleanCanvas();
-
-  drawBG();
-  stick.draw(ctx);
-  ball.draw(ctx);
+  canvas.cleanCanvas();
+  canvas.drawBG();
+  stick.draw(canvas.getCtx());
+  ball.draw(canvas.getCtx());
   drawBricks();
-  drawUI();
+  canvas.drawUI(framesPerSec, score);
 
   stick.moveStick(canvasWidth);
   ball.moveBall(canvasWidth);

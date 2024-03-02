@@ -1,3 +1,4 @@
+import { CanvasRenderingContext2D } from './Canvas';
 
 export class Ball {
   #color = '#FFF';

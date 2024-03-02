@@ -1,3 +1,5 @@
+import { CanvasRenderingContext2D } from './Canvas';
+
 export class Stick {
   #color = '#395B64';
   #width = 100;
