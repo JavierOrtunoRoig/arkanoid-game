@@ -1,8 +1,21 @@
 import { createHiDPICanvas } from './helpers';
 import './style.css'
 
+interface Brick {
+  x: number;
+  y: number;
+  status: number;
+}
+
 /* Create Arcade game */
-const canvas = createHiDPICanvas(1000, 1000)
+let width = 1000;
+console.log(window.innerWidth);
+if (window.innerWidth < 600) {
+  width = window.innerWidth;
+}
+
+let gameOver = false;
+const canvas = createHiDPICanvas(width, window.innerHeight)
 const ctx = canvas.getContext('2d') as unknown as CanvasRenderingContext2D;
 const canvasWidth = canvas.width;
 const canvasHeight = canvas.height;
@@ -10,12 +23,14 @@ const bgColor = '#2C3333';
 const stickColor = '#395B64';
 const scoreColor = '#E7F6F2';
 const ballColor = '#FFF';
-const bricks = '#A5C9CA';
+const bricksColor = '#A5C9CA';
 
 /* STICK VARIABLES */
 const stickWidth = 100;
 const stickHeight = 10;
-const stickVelocity = 20;
+const stickVelocity = 10;
+let moveStickLeft = false;
+let moveStickRight = false;
 const stickY = canvasHeight - stickHeight - 50;
 let stickX = (canvasWidth - stickWidth) / 2;
 
@@ -23,16 +38,59 @@ let stickX = (canvasWidth - stickWidth) / 2;
 const ballRadius = 10;
 let ballX = stickX + stickWidth / 2;
 let ballY = stickY - 11;
-let dx = 5;
-let dy = -5;
+let dx = 10;
+let dy = -10;
+
+/* BRICKS VARIABLES */
+const brickRowCount = 5;
+const brickColumnCount = 3;
+const brickWidth = 150;
+const brickHeight = 50;
+const brickPadding = 3;
+const brickOffsetTop = 30;
+// const brickOffsetLeft = 30;
+const bricks: Brick[][] = [];
+const extraSpace = width - (brickColumnCount * (brickWidth + brickPadding)) - brickPadding;
+const brickOffsetLeft = extraSpace / 2 ;
+
+for (let c = 0; c < brickColumnCount; c++) {
+  bricks[c] = [];
+  for (let r = 0; r < brickRowCount; r++) {
+    bricks[c][r] = { x: 0, y: 0, status: 1 };
+  }
+}
+
+// draw bricks
+function drawBricks() {
+  // draw bricks on the center of the canvas
+  for (let c = 0; c < brickColumnCount; c++) {
+    for (let r = 0; r < brickRowCount; r++) {
+      if (bricks[c][r].status === 1) {
+        const brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
+        const brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
+        bricks[c][r].x = brickX;
+        bricks[c][r].y = brickY;
+        ctx.fillStyle = bricksColor;
+        ctx.fillRect(brickX, brickY, brickWidth, brickHeight);
+      }
+    }
+  }
+}
 
 // add moving stick
 document.addEventListener('keydown', function(event) {
-  console.log(event);
-  if (event.key === 'ArrowRight' && stickX + stickWidth < canvasWidth - 20) {
-    stickX += stickVelocity;
-  } else if (event.key === 'ArrowLeft' && stickX > 20) {
-    stickX -= stickVelocity;
+  if (event.key === 'ArrowRight') {
+    moveStickRight = true;
+  } else if (event.key === 'ArrowLeft') {
+    moveStickLeft = true;
+  }
+});
+
+document.addEventListener('keyup', function(event) {
+  if (event.key === 'ArrowRight') {
+    moveStickRight = false;
+  } else if (event.key === 'ArrowLeft') {
+    moveStickLeft = false;
   }
 });
 
@@ -51,6 +109,14 @@ const drawBall = () => {
   ctx.closePath();
 }
 
+const moveStick = () => {
+  if (moveStickLeft && stickX > 10) {
+    stickX -= stickVelocity;
+  } else if (moveStickRight && stickX + stickWidth < canvasWidth - 10) {
+    stickX += stickVelocity;
+  }
+}
+
 function cleanCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 }
@@ -64,7 +130,7 @@ function drawUI() {
   ctx.fillText(`FPS: ${framesPerSec}`, 5, 10)
 }
 
-function updateBallPosition() {
+function moveBall() {
   if (ballX + dx > canvasWidth - ballRadius || ballX + dx < ballRadius) {
     dx *= -1;
   }
@@ -74,6 +140,45 @@ function updateBallPosition() {
 
   ballX += dx;
   ballY += dy;
+}
+
+function checkCollision() {
+  const bottomBall = ballY + ballRadius;
+  const lefBall = ballX - ballRadius;
+  const rightBall = ballX + ballRadius;
+  const topStick = stickY - stickHeight / 2;
+  const leftStick = stickX;
+  const rightStick = stickX + stickWidth;
+
+  if (leftStick <= rightBall && lefBall <= rightStick &&  bottomBall > topStick) {
+    // add angle to the ball
+    const middleStick = stickX + stickWidth / 2;
+    const angle = (ballX - middleStick) / stickWidth;
+    dx = 20 * angle;
+    dy *= -1;
+  } else if (bottomBall > canvasHeight) {
+    alert('GAME OVER');
+    document.location.reload();
+    gameOver = true;
+  }
+
+  // check collision with bricks
+  for (let c = 0; c < brickColumnCount; c++) {
+    for (let r = 0; r < brickRowCount; r++) {
+      const brick = bricks[c][r];
+      if (brick.status === 1) {
+        if (
+          ballX > brick.x &&
+          ballX < brick.x + brickWidth &&
+          ballY > brick.y &&
+          ballY < brick.y + brickHeight
+        ) {
+          dy *= -1;
+          brick.status = 0;
+        }
+      }
+    }
+  }
 }
 
 // a que velocidad de fps queremos que renderice nuestro juego
@@ -86,6 +191,7 @@ let frames = 0
 let framesPerSec = fps;
 
 function draw() {
+  if (gameOver) return;
   window.requestAnimationFrame(draw)
 
   const msNow = window.performance.now()
@@ -102,12 +208,18 @@ function draw() {
     frames = 0;
   }
 
-  updateBallPosition();
   cleanCanvas();
+
   drawBG();
   drawStick();
   drawBall();
+  drawBricks();
   drawUI()
+  
+  moveStick();
+  moveBall();
+
+  checkCollision();
 }
 
 draw()
