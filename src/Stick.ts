@@ -32,16 +32,8 @@ export class Stick {
     });
   }
 
-  setX(value: number) {
-    this.#x = value;
-  }
-
   getX() {
     return this.#x;
-  }
-
-  setY(value: number) {
-    this.#y = value;
   }
 
   getY() {

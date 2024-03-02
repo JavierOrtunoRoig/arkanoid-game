@@ -1,3 +1,4 @@
+import { Ball } from './Ball';
 import { Stick } from './Stick';
 import { createHiDPICanvas } from './helpers';
 import './style.css';
@@ -22,17 +23,10 @@ const canvasWidth = canvas.width;
 const canvasHeight = canvas.height;
 const bgColor = '#2C3333';
 const scoreColor = '#E7F6F2';
-const ballColor = '#FFF';
 const bricksColor = '#A5C9CA';
 
 const stick = new Stick(canvasWidth, canvasHeight);
-
-/* BALL VARIABLES */
-const ballRadius = 10;
-let ballX = stick.getX() + stick.getWidth() / 2;
-let ballY = stick.getY() - 11;
-let dx = 10;
-let dy = -10;
+const ball = new Ball(stick.getX() + stick.getWidth() / 2, stick.getY() - 11);
 
 /* BRICKS VARIABLES */
 const brickRowCount = 5;
@@ -70,14 +64,6 @@ function drawBricks() {
   }
 }
 
-const drawBall = () => {
-  ctx.fillStyle = ballColor;
-  ctx.beginPath();
-  ctx.arc(ballX, ballY, 10, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.closePath();
-};
-
 function cleanCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
@@ -91,22 +77,10 @@ function drawUI() {
   ctx.fillText(`FPS: ${framesPerSec}`, 5, 10);
 }
 
-function moveBall() {
-  if (ballX + dx > canvasWidth - ballRadius || ballX + dx < ballRadius) {
-    dx *= -1;
-  }
-  if (ballY + dy < ballRadius) {
-    dy *= -1;
-  }
-
-  ballX += dx;
-  ballY += dy;
-}
-
 function checkCollision() {
-  const bottomBall = ballY + ballRadius;
-  const lefBall = ballX - ballRadius;
-  const rightBall = ballX + ballRadius;
+  const bottomBall = ball.getY() + ball.getRadius();
+  const lefBall = ball.getX() - ball.getRadius();
+  const rightBall = ball.getX() + ball.getRadius();
   const topStick = stick.getY() - stick.getHeight() / 2;
   const leftStick = stick.getX();
   const rightStick = stick.getX() + stick.getWidth();
@@ -114,9 +88,9 @@ function checkCollision() {
   if (leftStick <= rightBall && lefBall <= rightStick && bottomBall > topStick) {
     // add angle to the ball
     const middleStick = stick.getX() + stick.getWidth() / 2;
-    const angle = (ballX - middleStick) / stick.getWidth();
-    dx = 20 * angle;
-    dy *= -1;
+    const angle = (ball.getX() - middleStick) / stick.getWidth();
+    ball.setDx(20 * angle);
+    ball.setDy(-ball.getDy());
   } else if (bottomBall > canvasHeight) {
     alert('GAME OVER');
     document.location.reload();
@@ -129,12 +103,12 @@ function checkCollision() {
       const brick = bricks[c][r];
       if (brick.status === 1) {
         if (
-          ballX > brick.x &&
-          ballX < brick.x + brickWidth &&
-          ballY > brick.y &&
-          ballY < brick.y + brickHeight
+          ball.getX() > brick.x &&
+          ball.getX() < brick.x + brickWidth &&
+          ball.getY() > brick.y &&
+          ball.getY() < brick.y + brickHeight
         ) {
-          dy *= -1;
+          ball.setDy(-ball.getDy());
           brick.status = 0;
         }
       }
@@ -173,12 +147,12 @@ function draw() {
 
   drawBG();
   stick.draw(ctx);
-  drawBall();
+  ball.draw(ctx);
   drawBricks();
   drawUI();
 
   stick.moveStick(canvasWidth);
-  moveBall();
+  ball.moveBall(canvasWidth);
 
   checkCollision();
 }
