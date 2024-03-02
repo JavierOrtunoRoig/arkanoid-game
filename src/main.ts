@@ -1,6 +1,6 @@
 import { Stick } from './Stick';
 import { createHiDPICanvas } from './helpers';
-import './style.css'
+import './style.css';
 
 interface Brick {
   x: number;
@@ -16,7 +16,7 @@ if (window.innerWidth < 600) {
 }
 
 let gameOver = false;
-const canvas = createHiDPICanvas(width, window.innerHeight)
+const canvas = createHiDPICanvas(width, window.innerHeight);
 const ctx = canvas.getContext('2d') as unknown as CanvasRenderingContext2D;
 const canvasWidth = canvas.width;
 const canvasHeight = canvas.height;
@@ -44,7 +44,7 @@ const brickOffsetTop = 30;
 // const brickOffsetLeft = 30;
 const bricks: Brick[][] = [];
 const extraSpace = width - (brickColumnCount * (brickWidth + brickPadding)) - brickPadding;
-const brickOffsetLeft = extraSpace / 2 ;
+const brickOffsetLeft = extraSpace / 2;
 
 for (let c = 0; c < brickColumnCount; c++) {
   bricks[c] = [];
@@ -76,10 +76,10 @@ const drawBall = () => {
   ctx.arc(ballX, ballY, 10, 0, Math.PI * 2);
   ctx.fill();
   ctx.closePath();
-}
+};
 
 function cleanCanvas() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function drawBG() {
@@ -88,7 +88,7 @@ function drawBG() {
 }
 
 function drawUI() {
-  ctx.fillText(`FPS: ${framesPerSec}`, 5, 10)
+  ctx.fillText(`FPS: ${framesPerSec}`, 5, 10);
 }
 
 function moveBall() {
@@ -109,11 +109,11 @@ function checkCollision() {
   const rightBall = ballX + ballRadius;
   const topStick = stick.getY() - stick.getHeight() / 2;
   const leftStick = stick.getX();
-  const rightStick = stick.getX() + stick.getWidth()
+  const rightStick = stick.getX() + stick.getWidth();
 
-  if (leftStick <= rightBall && lefBall <= rightStick &&  bottomBall > topStick) {
+  if (leftStick <= rightBall && lefBall <= rightStick && bottomBall > topStick) {
     // add angle to the ball
-    const middleStick = stick.getX(); + stick.getWidth() / 2;
+    const middleStick = stick.getX() + stick.getWidth() / 2;
     const angle = (ballX - middleStick) / stick.getWidth();
     dx = 20 * angle;
     dy *= -1;
@@ -143,28 +143,28 @@ function checkCollision() {
 }
 
 // a que velocidad de fps queremos que renderice nuestro juego
-const fps = 60
-  
-let msPrev = window.performance.now()
+const fps = 60;
+
+let msPrev = window.performance.now();
 let msFPSPrev = window.performance.now() + 1000;
-const msPerFrame = 1000 / fps
-let frames = 0
+const msPerFrame = 1000 / fps;
+let frames = 0;
 let framesPerSec = fps;
 
 function draw() {
   if (gameOver) return;
-  window.requestAnimationFrame(draw)
+  window.requestAnimationFrame(draw);
 
-  const msNow = window.performance.now()
+  const msNow = window.performance.now();
   const msPassed = msNow - msPrev;
-  
-  if (msPassed < msPerFrame) return
-  
-  const excessTime = msPassed % msPerFrame
-  msPrev = msNow - excessTime
-  frames++
+
+  if (msPassed < msPerFrame) return;
+
+  const excessTime = msPassed % msPerFrame;
+  msPrev = msNow - excessTime;
+  frames++;
   if (msFPSPrev < msNow) {
-    msFPSPrev = window.performance.now() + 1000
+    msFPSPrev = window.performance.now() + 1000;
     framesPerSec = frames;
     frames = 0;
   }
@@ -175,14 +175,12 @@ function draw() {
   stick.draw(ctx);
   drawBall();
   drawBricks();
-  drawUI()
-  
+  drawUI();
+
   stick.moveStick(canvasWidth);
   moveBall();
 
   checkCollision();
 }
 
-draw()
-
-
+draw();

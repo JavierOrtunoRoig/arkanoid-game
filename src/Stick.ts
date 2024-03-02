@@ -22,7 +22,7 @@ export class Stick {
         this.#moveLeft = true;
       }
     });
-    
+
     document.addEventListener('keyup', (event) => {
       if (event.key === 'ArrowRight') {
         this.#moveRight = false;
@@ -58,9 +58,9 @@ export class Stick {
 
   moveStick(canvasWidth: number) {
     if (this.#moveLeft && this.#x > 10) {
-       this.#x -= this.#velocity;
-    } else if (this.#moveRight &&  this.#x + this.#width < canvasWidth - 10) {
-       this.#x += this.#velocity;
+      this.#x -= this.#velocity;
+    } else if (this.#moveRight && this.#x + this.#width < canvasWidth - 10) {
+      this.#x += this.#velocity;
     }
   }
 
