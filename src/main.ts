@@ -30,7 +30,10 @@ const brickPadding = 3;
 const brickOffsetTop = 30;
 // const brickOffsetLeft = 30;
 const bricks: Brick[][] = [];
-const extraSpace = canvas.getWidth() - (brickColumnCount * (brickWidth + brickPadding)) - brickPadding;
+const extraSpace =
+  canvas.getWidth() -
+  brickColumnCount * (brickWidth + brickPadding) -
+  brickPadding;
 const brickOffsetLeft = extraSpace / 2;
 
 for (let c = 0; c < brickColumnCount; c++) {
@@ -65,7 +68,11 @@ function checkCollision() {
   const leftStick = stick.getX();
   const rightStick = stick.getX() + stick.getWidth();
 
-  if (leftStick <= rightBall && lefBall <= rightStick && bottomBall > topStick) {
+  if (
+    leftStick <= rightBall &&
+    lefBall <= rightStick &&
+    bottomBall > topStick
+  ) {
     // add angle to the ball
     const middleStick = stick.getX() + stick.getWidth() / 2;
     const angle = (ball.getX() - middleStick) / stick.getWidth();
@@ -97,39 +104,23 @@ function checkCollision() {
   }
 }
 
-// a que velocidad de fps queremos que renderice nuestro juego
-const fps = 60;
-
-let msPrev = window.performance.now();
-let msFPSPrev = window.performance.now() + 1000;
-const msPerFrame = 1000 / fps;
-let frames = 0;
-let framesPerSec = fps;
-
 function draw() {
   if (gameOver) return;
   window.requestAnimationFrame(draw);
 
   const msNow = window.performance.now();
-  const msPassed = msNow - msPrev;
+  const msPassed = msNow - canvas.getmsPrev();
 
-  if (msPassed < msPerFrame) return;
+  if (msPassed < canvas.getmsPerFrame()) return;
 
-  const excessTime = msPassed % msPerFrame;
-  msPrev = msNow - excessTime;
-  frames++;
-  if (msFPSPrev < msNow) {
-    msFPSPrev = window.performance.now() + 1000;
-    framesPerSec = frames;
-    frames = 0;
-  }
+  canvas.calculateFPS(msPassed, msNow);
 
   canvas.cleanCanvas();
   canvas.drawBG();
   stick.draw(canvas.getCtx());
   ball.draw(canvas.getCtx());
   drawBricks();
-  canvas.drawUI(framesPerSec, score);
+  canvas.drawUI(canvas.getFramesPerSec(), score);
 
   stick.moveStick(canvasWidth);
   ball.moveBall(canvasWidth);

@@ -50,7 +50,10 @@ export class Ball {
   }
 
   moveBall(canvasWidth: number) {
-    if (this.#X + this.#dx > canvasWidth - this.#radius || this.#X + this.#dx < this.#radius) {
+    if (
+      this.#X + this.#dx > canvasWidth - this.#radius ||
+      this.#X + this.#dx < this.#radius
+    ) {
       this.#dx *= -1;
     }
     if (this.#Y + this.#dy < this.#radius) {

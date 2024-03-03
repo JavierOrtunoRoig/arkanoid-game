@@ -1,6 +1,22 @@
 import { $ } from './helpers';
 
-export interface CanvasRenderingContext2D extends CanvasCompositing, CanvasDrawImage, CanvasDrawPath, CanvasFillStrokeStyles, CanvasFilters, CanvasImageData, CanvasImageSmoothing, CanvasPath, CanvasPathDrawingStyles, CanvasRect, CanvasShadowStyles, CanvasState, CanvasText, CanvasTextDrawingStyles, CanvasTransform, CanvasUserInterface {
+export interface CanvasRenderingContext2D
+  extends CanvasCompositing,
+    CanvasDrawImage,
+    CanvasDrawPath,
+    CanvasFillStrokeStyles,
+    CanvasFilters,
+    CanvasImageData,
+    CanvasImageSmoothing,
+    CanvasPath,
+    CanvasPathDrawingStyles,
+    CanvasRect,
+    CanvasShadowStyles,
+    CanvasState,
+    CanvasText,
+    CanvasTextDrawingStyles,
+    CanvasTransform,
+    CanvasUserInterface {
   mozBackingStorePixelRatio: never;
   msBackingStorePixelRatio: never;
   oBackingStorePixelRatio: never;
@@ -15,6 +31,11 @@ export class Canvas {
   #ctx: CanvasRenderingContext2D;
   #bgColor = '#2C3333';
   #scoreColor = '#E7F6F2';
+  #msPrev: number;
+  #msPerFrame: number;
+  #frames: number;
+  #framesPerSec: number;
+  #msFPSPrev: number;
 
   constructor() {
     this.#PIXEL_RATIO = this.calculatePixelRatio();
@@ -24,23 +45,39 @@ export class Canvas {
       width = window.innerWidth;
     }
     this.#canvas = this.createHiDPICanvas(width, window.innerHeight);
-    this.#ctx = this.#canvas.getContext('2d') as unknown as CanvasRenderingContext2D;
+    this.#ctx = this.#canvas.getContext(
+      '2d'
+    ) as unknown as CanvasRenderingContext2D;
+
+    const fps = 60;
+
+    this.#msPrev = window.performance.now();
+    this.#msFPSPrev = window.performance.now() + 1000;
+    this.#msPerFrame = 1000 / fps;
+    this.#frames = 0;
+    this.#framesPerSec = fps;
   }
 
   calculatePixelRatio = (): number => {
     const canvas = $('#game') as HTMLCanvasElement;
     const ctx = canvas.getContext('2d') as unknown as CanvasRenderingContext2D;
     const dpr = window.devicePixelRatio || 1;
-    const bsr = ctx?.webkitBackingStorePixelRatio ||
-              ctx?.mozBackingStorePixelRatio ||
-              ctx?.msBackingStorePixelRatio ||
-              ctx?.oBackingStorePixelRatio ||
-              ctx?.backingStorePixelRatio || 1;
+    const bsr =
+      ctx?.webkitBackingStorePixelRatio ||
+      ctx?.mozBackingStorePixelRatio ||
+      ctx?.msBackingStorePixelRatio ||
+      ctx?.oBackingStorePixelRatio ||
+      ctx?.backingStorePixelRatio ||
+      1;
 
     return dpr / bsr;
   };
 
-  createHiDPICanvas(w: number, h: number, ratio: number = this.#PIXEL_RATIO): HTMLCanvasElement {
+  createHiDPICanvas(
+    w: number,
+    h: number,
+    ratio: number = this.#PIXEL_RATIO
+  ): HTMLCanvasElement {
     const canvas = $('#game') as HTMLCanvasElement;
     canvas.width = w * ratio;
     canvas.height = h * ratio;
@@ -65,6 +102,29 @@ export class Canvas {
     this.#ctx.fillText(`FPS: ${framesPerSec}`, 5, 20, 1000);
     this.#ctx.font = '18px Arial';
     this.#ctx.fillText(`Score: ${score}`, 5, 40, 1000);
+  }
+
+  calculateFPS(msPassed: number, msNow: number) {
+    const excessTime = msPassed % this.#msPerFrame;
+    this.#msPrev = msNow - excessTime;
+    this.#frames++;
+    if (this.#msFPSPrev < msNow) {
+      this.#msFPSPrev = window.performance.now() + 1000;
+      this.#framesPerSec = this.#frames;
+      this.#frames = 0;
+    }
+  }
+
+  getFramesPerSec() {
+    return this.#framesPerSec;
+  }
+
+  getmsPerFrame() {
+    return this.#msPerFrame;
+  }
+
+  getmsPrev() {
+    return this.#msPrev;
   }
 
   getCanvas() {
