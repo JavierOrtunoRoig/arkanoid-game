@@ -1,64 +1,19 @@
 import { Ball } from './Ball';
 import { Canvas } from './Canvas';
+import { Level } from './Level';
 import { Stick } from './Stick';
 import './style.css';
 
-interface Brick {
-  x: number;
-  y: number;
-  status: number;
-}
-
 let gameOver = false;
 const canvas = new Canvas();
-const ctx = canvas.getCtx();
 const canvasWidth = canvas.getWidth();
 const canvasHeight = canvas.getHeight();
 
 let score = 0;
-const bricksColor = '#A5C9CA';
 
 const stick = new Stick(canvasWidth, canvasHeight);
 const ball = new Ball(stick.getX() + stick.getWidth() / 2, stick.getY() - 11);
-
-/* BRICKS VARIABLES */
-const brickRowCount = 5;
-const brickColumnCount = 3;
-const brickWidth = 150;
-const brickHeight = 50;
-const brickPadding = 3;
-const brickOffsetTop = 30;
-// const brickOffsetLeft = 30;
-const bricks: Brick[][] = [];
-const extraSpace =
-  canvas.getWidth() -
-  brickColumnCount * (brickWidth + brickPadding) -
-  brickPadding;
-const brickOffsetLeft = extraSpace / 2;
-
-for (let c = 0; c < brickColumnCount; c++) {
-  bricks[c] = [];
-  for (let r = 0; r < brickRowCount; r++) {
-    bricks[c][r] = { x: 0, y: 0, status: 1 };
-  }
-}
-
-// draw bricks
-function drawBricks() {
-  // draw bricks on the center of the canvas
-  for (let c = 0; c < brickColumnCount; c++) {
-    for (let r = 0; r < brickRowCount; r++) {
-      if (bricks[c][r].status === 1) {
-        const brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
-        const brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
-        bricks[c][r].x = brickX;
-        bricks[c][r].y = brickY;
-        ctx.fillStyle = bricksColor;
-        ctx.fillRect(brickX, brickY, brickWidth, brickHeight);
-      }
-    }
-  }
-}
+const level = new Level(canvasWidth);
 
 function checkCollision() {
   const bottomBall = ball.getY() + ball.getRadius();
@@ -85,18 +40,18 @@ function checkCollision() {
   }
 
   // check collision with bricks
-  for (let c = 0; c < brickColumnCount; c++) {
-    for (let r = 0; r < brickRowCount; r++) {
-      const brick = bricks[c][r];
-      if (brick.status === 1) {
+  for (let c = 0; c < level.getBrickColumnCount(); c++) {
+    for (let r = 0; r < level.getBrickRowCount(); r++) {
+      const brick = level.getBrick(c, r);
+      if (brick.getStatus() === 1) {
         if (
-          ball.getX() > brick.x &&
-          ball.getX() < brick.x + brickWidth &&
-          ball.getY() > brick.y &&
-          ball.getY() < brick.y + brickHeight
+          ball.getX() > brick.getX() &&
+          ball.getX() < brick.getX() + level.getBrickWidth() &&
+          ball.getY() > brick.getY() &&
+          ball.getY() < brick.getY() + level.getBrickHeight()
         ) {
           ball.setDy(-ball.getDy());
-          brick.status = 0;
+          brick.setStatus(0);
           score++;
         }
       }
@@ -119,7 +74,7 @@ function draw() {
   canvas.drawBG();
   stick.draw(canvas.getCtx());
   ball.draw(canvas.getCtx());
-  drawBricks();
+  level.draw(canvas.getCtx());
   canvas.drawUI(canvas.getFramesPerSec(), score);
 
   stick.moveStick(canvasWidth);
