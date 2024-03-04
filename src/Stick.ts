@@ -33,18 +33,16 @@ export class Stick {
       }
     });
 
-    document.addEventListener('touchstart', (event) => {
+    document.addEventListener('touchmove', (event) => {
       const touch = event.touches[0];
-      if (touch.clientX < window.innerWidth / 2) {
-        this.#moveLeft = true;
-      } else {
-        this.#moveRight = true;
-      }
-    });
 
-    document.addEventListener('touchend', () => {
-      this.#moveLeft = false;
-      this.#moveRight = false;
+      // if use touche the screen then move the stick keeping the touch position
+      if (
+        touch.clientX > this.#width / 2 &&
+        touch.clientX < window.innerWidth - this.#width / 2
+      ) {
+        this.#x = touch.clientX - this.#width / 2;
+      }
     });
   }
 
