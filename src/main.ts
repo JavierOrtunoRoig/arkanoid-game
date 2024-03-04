@@ -16,13 +16,29 @@ let score = 0;
 const mainThemeAudio = $('#main-theme') as HTMLAudioElement;
 mainThemeAudio.volume = 0.5;
 
+document.addEventListener('keydown', () => {
+  mainThemeAudio.play();
+  mainThemeAudio.loop = true;
+});
+
+document.addEventListener('touchstart', () => {
+  mainThemeAudio.play();
+  mainThemeAudio.loop = true;
+});
+
 const gameOverAudio = $('#game-over') as HTMLAudioElement;
 gameOverAudio.volume = 0.5;
 
 const stick = new Stick(canvasWidth, canvasHeight);
 const ball = new Ball(stick.getX() + stick.getWidth() / 2, stick.getY() - 11);
-const level = new Level(canvasWidth);
 const xboxGamepad = new XboxController(stick);
+let level: Level;
+
+if (window.innerWidth < 600) {
+  level = new Level(canvasWidth);
+} else {
+  level = new Level(canvasWidth, 100, 25);
+}
 
 function checkCollision() {
   const bottomBall = ball.getY() + ball.getRadius();

@@ -8,13 +8,15 @@ export class Level {
   #brickColumnCount = 3;
   #extraSpace: number;
   #brickOffsetLeft: number;
-  #brickWidth = 150;
-  #brickHeight = 50;
+  #brickWidth;
+  #brickHeight;
   #brickPadding = 3;
   #brickOffsetTop = 30;
   // const brickOffsetLeft = 30;
 
-  constructor(canvasWidth: number) {
+  constructor(canvasWidth: number, brickWidth = 150, brickHeight = 50) {
+    this.#brickWidth = brickWidth;
+    this.#brickHeight = brickHeight;
     this.#extraSpace =
       canvasWidth -
       this.#brickColumnCount * (this.#brickWidth + this.#brickPadding) -
