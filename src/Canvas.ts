@@ -26,7 +26,7 @@ export interface CanvasRenderingContext2D
 }
 
 export class Canvas {
-  #PIXEL_RATIO: number;
+  // #PIXEL_RATIO: number;
   #canvas: HTMLCanvasElement;
   #ctx: CanvasRenderingContext2D;
   #bgColor = '#2C3333';
@@ -38,7 +38,7 @@ export class Canvas {
   #msFPSPrev: number;
 
   constructor() {
-    this.#PIXEL_RATIO = this.calculatePixelRatio();
+    // this.#PIXEL_RATIO = this.calculatePixelRatio();
 
     let width = 1000;
     if (window.innerWidth < 600) {
