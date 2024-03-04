@@ -38,13 +38,10 @@ export class Canvas {
   #msFPSPrev: number;
 
   constructor() {
-    // this.#PIXEL_RATIO = this.calculatePixelRatio();
-
-    let width = 1000;
-    if (window.innerWidth < 600) {
-      width = window.innerWidth;
-    }
-    this.#canvas = this.createHiDPICanvas(width, window.innerHeight);
+    this.#canvas = this.createHiDPICanvas(
+      window.innerWidth,
+      window.innerHeight
+    );
     this.#ctx = this.#canvas.getContext(
       '2d'
     ) as unknown as CanvasRenderingContext2D;
@@ -69,8 +66,6 @@ export class Canvas {
       ctx?.oBackingStorePixelRatio ||
       ctx?.backingStorePixelRatio ||
       1;
-
-    console.log({ dpr, bsr, division: dpr / bsr });
 
     return dpr / bsr;
   };
