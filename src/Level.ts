@@ -22,6 +22,8 @@ export class Level {
       this.#brickColumnCount * (this.#brickWidth + this.#brickPadding) -
       this.#brickPadding;
     this.#brickOffsetLeft = this.#extraSpace / 2;
+    // this.#brickOffsetLeft = 0;
+    console.log({ extraSpace: this.#extraSpace });
 
     for (let c = 0; c < this.#brickColumnCount; c++) {
       this.#bricks[c] = [];

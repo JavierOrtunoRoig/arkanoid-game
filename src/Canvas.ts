@@ -1,5 +1,3 @@
-import { $ } from './helpers';
-
 export interface CanvasRenderingContext2D
   extends CanvasCompositing,
     CanvasDrawImage,
@@ -37,11 +35,8 @@ export class Canvas {
   #framesPerSec: number;
   #msFPSPrev: number;
 
-  constructor() {
-    this.#canvas = this.createHiDPICanvas(
-      window.innerWidth,
-      window.innerHeight
-    );
+  constructor(width: number, height: number) {
+    this.#canvas = this.createHiDPICanvas(width, height);
     this.#ctx = this.#canvas.getContext(
       '2d'
     ) as unknown as CanvasRenderingContext2D;
@@ -55,31 +50,11 @@ export class Canvas {
     this.#framesPerSec = fps;
   }
 
-  calculatePixelRatio = (): number => {
-    const canvas = $('#game') as HTMLCanvasElement;
-    const ctx = canvas.getContext('2d') as unknown as CanvasRenderingContext2D;
-    const dpr = window.devicePixelRatio || 1;
-    const bsr =
-      ctx?.webkitBackingStorePixelRatio ||
-      ctx?.mozBackingStorePixelRatio ||
-      ctx?.msBackingStorePixelRatio ||
-      ctx?.oBackingStorePixelRatio ||
-      ctx?.backingStorePixelRatio ||
-      1;
-
-    return dpr / bsr;
-  };
-
-  createHiDPICanvas(
-    w: number,
-    h: number
-    // ratio: number = this.#PIXEL_RATIO
-  ): HTMLCanvasElement {
-    const canvas = $('#game') as HTMLCanvasElement;
+  createHiDPICanvas(w: number, h: number): HTMLCanvasElement {
+    const canvas = document.createElement('canvas');
+    document.body.insertBefore(canvas, document.body.childNodes[0]);
     canvas.width = w; //* ratio;
     canvas.height = h; //* ratio;
-    // canvas.style.width = w + 'px';
-    // canvas.style.height = h + 'px';
     canvas.getContext('2d'); // ?.setTransform(ratio, 0, 0, ratio, 0, 0);
     return canvas;
   }

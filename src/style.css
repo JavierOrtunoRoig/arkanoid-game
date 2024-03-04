@@ -22,9 +22,6 @@ body {
   height: 100vh;
 }
 
-#game {
-  height: 100%;
-}
 
 @media (prefers-color-scheme: light) {
   :root {

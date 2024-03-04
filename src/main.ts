@@ -7,7 +7,15 @@ import { $ } from './helpers';
 import './style.css';
 
 let gameOver = false;
-const canvas = new Canvas();
+
+let width = 1000;
+if (window.innerWidth < 600) {
+  width = window.innerWidth;
+}
+console.log({ width, height: window.innerHeight });
+
+console.log({ width: window.innerWidth, height: window.innerHeight });
+const canvas = new Canvas(width, window.innerHeight);
 const canvasWidth = canvas.getWidth();
 const canvasHeight = canvas.getHeight();
 
@@ -35,9 +43,9 @@ const xboxGamepad = new XboxController(stick);
 let level: Level;
 
 if (window.innerWidth < 600) {
-  level = new Level(canvasWidth);
+  level = new Level(window.innerWidth, 60, 20);
 } else {
-  level = new Level(canvasWidth, 100, 25);
+  level = new Level(width);
 }
 
 function checkCollision() {
