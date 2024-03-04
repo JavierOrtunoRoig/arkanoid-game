@@ -32,6 +32,20 @@ export class Stick {
         this.#moveLeft = false;
       }
     });
+
+    document.addEventListener('touchstart', (event) => {
+      const touch = event.touches[0];
+      if (touch.clientX < window.innerWidth / 2) {
+        this.#moveLeft = true;
+      } else {
+        this.#moveRight = true;
+      }
+    });
+
+    document.addEventListener('touchend', () => {
+      this.#moveLeft = false;
+      this.#moveRight = false;
+    });
   }
 
   getX() {

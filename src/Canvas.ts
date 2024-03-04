@@ -70,20 +70,22 @@ export class Canvas {
       ctx?.backingStorePixelRatio ||
       1;
 
+    console.log({ dpr, bsr, division: dpr / bsr });
+
     return dpr / bsr;
   };
 
   createHiDPICanvas(
     w: number,
-    h: number,
-    ratio: number = this.#PIXEL_RATIO
+    h: number
+    // ratio: number = this.#PIXEL_RATIO
   ): HTMLCanvasElement {
     const canvas = $('#game') as HTMLCanvasElement;
-    canvas.width = w * ratio;
-    canvas.height = h * ratio;
-    canvas.style.width = w + 'px';
-    canvas.style.height = h + 'px';
-    canvas.getContext('2d')?.setTransform(ratio, 0, 0, ratio, 0, 0);
+    canvas.width = w; //* ratio;
+    canvas.height = h; //* ratio;
+    // canvas.style.width = w + 'px';
+    // canvas.style.height = h + 'px';
+    canvas.getContext('2d'); // ?.setTransform(ratio, 0, 0, ratio, 0, 0);
     return canvas;
   }
 

@@ -16,7 +16,6 @@ Enjoy the original game music for an authentic experience.
 - Implementation of lives and power-ups to add complexity to the game.
 - Creation of new maps to offer variety in levels.
 
-
 ## Contributions
 
 Contributions are welcome! If you'd like to improve this game or add new features, feel free to submit a pull request.
