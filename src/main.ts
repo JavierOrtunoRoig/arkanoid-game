@@ -3,6 +3,7 @@ import { Canvas } from './Canvas';
 import { Level } from './Level';
 import { Stick } from './Stick';
 import { XboxController } from './XboxController';
+import { $ } from './helpers';
 import './style.css';
 
 let gameOver = false;
@@ -11,6 +12,12 @@ const canvasWidth = canvas.getWidth();
 const canvasHeight = canvas.getHeight();
 
 let score = 0;
+
+const mainThemeAudio = $('#main-theme') as HTMLAudioElement;
+mainThemeAudio.volume = 0.5;
+
+const gameOverAudio = $('#game-over') as HTMLAudioElement;
+gameOverAudio.volume = 0.5;
 
 const stick = new Stick(canvasWidth, canvasHeight);
 const ball = new Ball(stick.getX() + stick.getWidth() / 2, stick.getY() - 11);
@@ -36,9 +43,12 @@ function checkCollision() {
     ball.setDx(20 * angle);
     ball.setDy(-ball.getDy());
   } else if (bottomBall > canvasHeight) {
+    gameOver = true;
+    mainThemeAudio.pause();
+    mainThemeAudio.currentTime = 0;
+    gameOverAudio.play();
     alert(`GAME OVER. Your score is: ${score}`);
     document.location.reload();
-    gameOver = true;
   }
 
   // check collision with bricks

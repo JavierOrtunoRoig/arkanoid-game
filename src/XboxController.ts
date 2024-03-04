@@ -3,6 +3,8 @@ import { Stick } from './Stick';
 export class XboxController {
   #gamepadConnected = false;
   #stick: Stick;
+  /** If it's true then the movement has been reseted and we won't reset it again until controlled being used */
+  #isCleaned = false;
 
   constructor(stick: Stick) {
     this.#setEvents();
@@ -23,20 +25,22 @@ export class XboxController {
     const gamepads = navigator.getGamepads();
     const gamepad = gamepads[0] as Gamepad;
 
-    // this.#checkDirectionButtons(gamepad);
-    // this.#checkAxis(gamepad);
-
     if (gamepad.buttons[14].pressed) {
       this.#stick.setMoveLeft(true);
+      this.#isCleaned = false;
     } else if (gamepad.axes[0] < -0.5) {
       this.#stick.setMoveLeft(true);
+      this.#isCleaned = false;
     } else if (gamepad.buttons[15].pressed) {
       this.#stick.setMoveRight(true);
+      this.#isCleaned = false;
     } else if (gamepad.axes[0] > 0.5) {
       this.#stick.setMoveRight(true);
-    } else {
+      this.#isCleaned = false;
+    } else if (!this.#isCleaned) {
       this.#stick.setMoveLeft(false);
       this.#stick.setMoveRight(false);
+      this.#isCleaned = true;
     }
   }
 }
