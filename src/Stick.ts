@@ -58,6 +58,14 @@ export class Stick {
     }
   }
 
+  setMoveLeft(value: boolean) {
+    this.#moveLeft = value;
+  }
+
+  setMoveRight(value: boolean) {
+    this.#moveRight = value;
+  }
+
   draw(ctx: CanvasRenderingContext2D) {
     ctx.fillStyle = this.#color;
     ctx.fillRect(this.#x, this.#y, this.#width, this.#height);

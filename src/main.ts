@@ -2,6 +2,7 @@ import { Ball } from './Ball';
 import { Canvas } from './Canvas';
 import { Level } from './Level';
 import { Stick } from './Stick';
+import { XboxController } from './XboxController';
 import './style.css';
 
 let gameOver = false;
@@ -14,6 +15,7 @@ let score = 0;
 const stick = new Stick(canvasWidth, canvasHeight);
 const ball = new Ball(stick.getX() + stick.getWidth() / 2, stick.getY() - 11);
 const level = new Level(canvasWidth);
+const xboxGamepad = new XboxController(stick);
 
 function checkCollision() {
   const bottomBall = ball.getY() + ball.getRadius();
@@ -69,6 +71,7 @@ function draw() {
   if (msPassed < canvas.getmsPerFrame()) return;
 
   canvas.calculateFPS(msPassed, msNow);
+  xboxGamepad.controllerInput();
 
   canvas.cleanCanvas();
   canvas.drawBG();
