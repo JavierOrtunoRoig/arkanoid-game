@@ -1,28 +1,51 @@
 import { CanvasRenderingContext2D } from './Canvas';
+import { Lives } from './Lives';
 
-const SPRITE = '/Vaus.png';
+interface Sprite {
+  src: string;
+  width: number;
+  height: number;
+}
+
+const SPRITES: Sprite[] = [
+  {
+    src: '/Vaus_break.png',
+    width: 32,
+    height: 8
+  },
+  {
+    src: '/Vaus.png',
+    width: 32,
+    height: 8
+  },
+  {
+    src: '/Vaus_large.png',
+    width: 48,
+    height: 8
+  }
+];
+
 const bottomOffset = 16;
 
 export class Vaus {
-  #width = 32;
-  #height = 8;
   #velocity = 10;
   #moveLeft = false;
   #moveRight = false;
   #x: number;
   #y: number;
-  #image: CanvasImageSource;
+  #image: HTMLImageElement;
+  #lives: Lives = Lives.getInstance();
 
   constructor(
     ctx: CanvasRenderingContext2D,
     canvasWidth: number,
     canvasHeight: number
   ) {
-    this.#x = (canvasWidth - this.#width) / 2;
-    this.#y = canvasHeight - this.#height - bottomOffset;
+    this.#x = (canvasWidth - this.getWidth()) / 2;
+    this.#y = canvasHeight - this.getHeight() - bottomOffset;
     this.setEvents();
     this.#image = new Image();
-    this.#image.src = SPRITE;
+    this.#image.src = this.#getActualSprite().src;
     this.#image.onload = () => {
       // Dibujar la imagen solo después de que se haya cargado correctamente
       this.draw(ctx);
@@ -51,10 +74,10 @@ export class Vaus {
 
       // if use touche the screen then move the stick keeping the touch position
       if (
-        touch.clientX > this.#width / 2 &&
-        touch.clientX < window.innerWidth - this.#width / 2
+        touch.clientX > this.getWidth() / 2 &&
+        touch.clientX < window.innerWidth - this.getWidth() / 2
       ) {
-        this.#x = touch.clientX - this.#width / 2;
+        this.#x = touch.clientX - this.getWidth() / 2;
       }
     });
   }
@@ -68,17 +91,20 @@ export class Vaus {
   }
 
   getWidth() {
-    return this.#width;
+    return this.#getActualSprite().width;
   }
 
   getHeight() {
-    return this.#height;
+    return this.#getActualSprite().height;
   }
 
   moveStick(canvasWidth: number) {
     if (this.#moveLeft && this.#x > 10) {
       this.#x -= this.#velocity;
-    } else if (this.#moveRight && this.#x + this.#width < canvasWidth - 10) {
+    } else if (
+      this.#moveRight &&
+      this.#x + this.getWidth() < canvasWidth - 10
+    ) {
       this.#x += this.#velocity;
     }
   }
@@ -91,7 +117,21 @@ export class Vaus {
     this.#moveRight = value;
   }
 
+  #getActualSprite() {
+    console.log({ lives: this.#lives.getLives() });
+    return SPRITES[this.#lives.getLives() - 1];
+  }
+
   draw(ctx: CanvasRenderingContext2D) {
-    ctx.drawImage(this.#image, this.#x, this.#y, this.#width, this.#height);
+    if (this.#image.src !== this.#getActualSprite().src) {
+      this.#image.src = this.#getActualSprite().src;
+    }
+    ctx.drawImage(
+      this.#image,
+      this.#x,
+      this.#y,
+      this.getWidth(),
+      this.getHeight()
+    );
   }
 }

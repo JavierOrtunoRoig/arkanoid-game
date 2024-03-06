@@ -1,6 +1,7 @@
 import { Ball } from './Ball';
 import { Canvas } from './Canvas';
 import { Level } from './Level';
+import { Lives } from './Lives';
 import { Vaus } from './Vaus';
 import { XboxController } from './XboxController';
 import { $ } from './helpers';
@@ -42,7 +43,7 @@ const runGame = () => {
   const canvasHeight = canvas.getHeight();
 
   const vaus = new Vaus(canvas.getCtx(), canvasWidth, canvasHeight);
-  const ball = new Ball(vaus.getX() + vaus.getWidth() / 2, vaus.getY() - 11);
+  let ball = new Ball(vaus.getX() + vaus.getWidth() / 2, vaus.getY() - 11);
   const xboxGamepad = new XboxController(vaus);
   const level = new Level();
 
@@ -84,11 +85,9 @@ const runGame = () => {
     const leftStick = vaus.getX();
     const rightStick = vaus.getX() + vaus.getWidth();
 
-    if (
-      leftStick <= rightBall &&
-      lefBall <= rightStick &&
-      bottomBall > topStick
-    ) {
+    const ballHitVaus =
+      leftStick <= rightBall && lefBall <= rightStick && bottomBall > topStick;
+    if (ballHitVaus) {
       // Calculate the hit position relative to the width of the vaus
       const hitPosition = (ball.getX() - leftStick) / vaus.getWidth();
 
@@ -104,13 +103,19 @@ const runGame = () => {
       );
       ball.setDx(speed * Math.sin(angle));
       ball.setDy(-speed * Math.cos(angle));
-    } else if (bottomBall > canvasHeight) {
-      gameOver = true;
-      mainThemeAudio.pause();
-      mainThemeAudio.currentTime = 0;
-      gameOverAudio.play();
-      alert(`GAME OVER. Your score is: ${score}`);
-      document.location.reload();
+    } else if (bottomBall > topStick) {
+      const lives = Lives.getInstance();
+      lives.decreaseLives();
+      if (lives.getLives() === 0) {
+        gameOver = true;
+        mainThemeAudio.pause();
+        mainThemeAudio.currentTime = 0;
+        gameOverAudio.play();
+        alert(`GAME OVER. Your score is: ${score}`);
+        document.location.reload();
+      } else {
+        ball = new Ball(vaus.getX() + vaus.getWidth() / 2, vaus.getY() - 11);
+      }
     }
 
     // check collision with blocks

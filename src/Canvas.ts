@@ -1,3 +1,5 @@
+import { Lives } from './Lives';
+
 export interface CanvasRenderingContext2D
   extends CanvasCompositing,
     CanvasDrawImage,
@@ -35,6 +37,7 @@ export class Canvas {
   #frames: number;
   #framesPerSec: number;
   #msFPSPrev: number;
+  #lives = Lives.getInstance();
 
   constructor(width: number) {
     this.#canvas = this.createHiDPICanvas(width, HEIGHT);
@@ -66,10 +69,10 @@ export class Canvas {
 
   drawUI(framesPerSec: number, score: number) {
     this.#ctx.fillStyle = this.#scoreColor;
-    this.#ctx.font = '16px Arial';
-    this.#ctx.fillText(`FPS: ${framesPerSec}`, 5, 20, 1000);
-    this.#ctx.font = '18px Arial';
-    this.#ctx.fillText(`Score: ${score}`, 5, 40, 1000);
+    this.#ctx.font = '12px Arial';
+    this.#ctx.fillText(`FPS: ${framesPerSec}`, 5, 15);
+    this.#ctx.fillText(`Score: ${score}`, 5, 30);
+    this.#ctx.fillText(`Lives: ${this.#lives.getLives()}`, 5, 45);
   }
 
   calculateFPS(msPassed: number, msNow: number) {
