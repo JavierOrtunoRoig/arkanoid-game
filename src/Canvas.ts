@@ -29,7 +29,6 @@ export class Canvas {
   // #PIXEL_RATIO: number;
   #canvas: HTMLCanvasElement;
   #ctx: CanvasRenderingContext2D;
-  #bgColor = '#2C3333';
   #scoreColor = '#E7F6F2';
   #msPrev: number;
   #msPerFrame: number;
@@ -63,11 +62,6 @@ export class Canvas {
 
   cleanCanvas() {
     this.#ctx.clearRect(0, 0, this.getWidth(), this.getHeight());
-  }
-
-  drawBG() {
-    this.#ctx.fillStyle = this.#bgColor;
-    this.#ctx.fillRect(0, 0, this.getWidth(), this.getHeight());
   }
 
   drawUI(framesPerSec: number, score: number) {

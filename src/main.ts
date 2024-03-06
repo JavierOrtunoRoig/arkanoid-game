@@ -65,7 +65,6 @@ const runGame = () => {
     xboxGamepad.controllerInput();
 
     canvas.cleanCanvas();
-    canvas.drawBG();
     vaus.draw(canvas.getCtx());
     ball.draw(canvas.getCtx());
     level.draw(canvas.getCtx());
