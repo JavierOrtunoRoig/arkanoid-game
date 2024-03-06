@@ -1,19 +1,32 @@
 import { CanvasRenderingContext2D } from './Canvas';
 
-export class Stick {
-  #color = '#395B64';
-  #width = 100;
-  #height = 10;
+const SPRITE = '/Vaus.png';
+const bottomOffset = 16;
+
+export class Vaus {
+  #width = 32;
+  #height = 8;
   #velocity = 10;
   #moveLeft = false;
   #moveRight = false;
   #x: number;
   #y: number;
+  #image: CanvasImageSource;
 
-  constructor(canvasWidth: number, canvasHeight: number) {
+  constructor(
+    ctx: CanvasRenderingContext2D,
+    canvasWidth: number,
+    canvasHeight: number
+  ) {
     this.#x = (canvasWidth - this.#width) / 2;
-    this.#y = canvasHeight - this.#height - 50;
+    this.#y = canvasHeight - this.#height - bottomOffset;
     this.setEvents();
+    this.#image = new Image();
+    this.#image.src = SPRITE;
+    this.#image.onload = () => {
+      // Dibujar la imagen solo después de que se haya cargado correctamente
+      this.draw(ctx);
+    };
   }
 
   setEvents() {
@@ -79,7 +92,6 @@ export class Stick {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = this.#color;
-    ctx.fillRect(this.#x, this.#y, this.#width, this.#height);
+    ctx.drawImage(this.#image, this.#x, this.#y, this.#width, this.#height);
   }
 }

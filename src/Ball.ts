@@ -1,12 +1,14 @@
 import { CanvasRenderingContext2D } from './Canvas';
 
+const VELOCITY = 8;
+
 export class Ball {
   #color = '#FFF';
-  #radius = 10;
+  #radius = 5;
   #X: number;
   #Y: number;
-  #dx = 10;
-  #dy = -10;
+  #dx = VELOCITY;
+  #dy = -VELOCITY;
 
   constructor(x: number, y: number) {
     this.#X = x;
@@ -67,7 +69,7 @@ export class Ball {
   draw(ctx: CanvasRenderingContext2D) {
     ctx.fillStyle = this.#color;
     ctx.beginPath();
-    ctx.arc(this.#X, this.#Y, 10, 0, Math.PI * 2);
+    ctx.arc(this.#X, this.#Y, this.#radius, 0, Math.PI * 2);
     ctx.fill();
     ctx.closePath();
   }

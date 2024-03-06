@@ -4,7 +4,7 @@ This is an Arkanoid game developed in TypeScript using the Canvas API for graphi
 
 ## How to Play
 - Use the arrow keys or a gamepad to control the paddle and bounce the ball.
-- Destroy all bricks to win!
+- Destroy all blocks to win!
 
 ## Features
 Play Arkanoid on your computer using the keyboard or a gamepad.

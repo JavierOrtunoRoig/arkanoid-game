@@ -1,7 +1,7 @@
 import { Ball } from './Ball';
 import { Canvas } from './Canvas';
 import { Level } from './Level';
-import { Stick } from './Stick';
+import { Vaus } from './Vaus';
 import { XboxController } from './XboxController';
 import { $ } from './helpers';
 import './style.css';
@@ -9,8 +9,8 @@ import './style.css';
 let gameOver = false;
 let score = 0;
 
-let width = 1000;
-if (window.innerWidth < 600) {
+let width = 480;
+if (window.innerWidth < 480) {
   width = window.innerWidth;
 }
 
@@ -37,20 +37,20 @@ const gameOverAudio = $('#game-over') as HTMLAudioElement;
 gameOverAudio.volume = 0.5;
 
 const runGame = () => {
-  const canvas = new Canvas(width, window.innerHeight);
+  const canvas = new Canvas(width);
   const canvasWidth = canvas.getWidth();
   const canvasHeight = canvas.getHeight();
 
-  const stick = new Stick(canvasWidth, canvasHeight);
-  const ball = new Ball(stick.getX() + stick.getWidth() / 2, stick.getY() - 11);
-  const xboxGamepad = new XboxController(stick);
-  let level: Level;
+  const vaus = new Vaus(canvas.getCtx(), canvasWidth, canvasHeight);
+  const ball = new Ball(vaus.getX() + vaus.getWidth() / 2, vaus.getY() - 11);
+  const xboxGamepad = new XboxController(vaus);
+  const level = new Level();
 
-  if (window.innerWidth < 600) {
-    level = new Level(window.innerWidth, 60, 20);
-  } else {
-    level = new Level(width);
-  }
+  // if (window.innerWidth < 480) {
+  //   level = new Level(60, 20);
+  // } else {
+  //   level = new Level(width);
+  // }
 
   function draw() {
     if (gameOver) return;
@@ -66,12 +66,12 @@ const runGame = () => {
 
     canvas.cleanCanvas();
     canvas.drawBG();
-    stick.draw(canvas.getCtx());
+    vaus.draw(canvas.getCtx());
     ball.draw(canvas.getCtx());
     level.draw(canvas.getCtx());
     canvas.drawUI(canvas.getFramesPerSec(), score);
 
-    stick.moveStick(canvasWidth);
+    vaus.moveStick(canvasWidth);
     ball.moveBall(canvasWidth);
 
     checkCollision();
@@ -81,9 +81,9 @@ const runGame = () => {
     const bottomBall = ball.getY() + ball.getRadius();
     const lefBall = ball.getX() - ball.getRadius();
     const rightBall = ball.getX() + ball.getRadius();
-    const topStick = stick.getY() - stick.getHeight() / 2;
-    const leftStick = stick.getX();
-    const rightStick = stick.getX() + stick.getWidth();
+    const topStick = vaus.getY() - vaus.getHeight() / 2;
+    const leftStick = vaus.getX();
+    const rightStick = vaus.getX() + vaus.getWidth();
 
     if (
       leftStick <= rightBall &&
@@ -91,8 +91,8 @@ const runGame = () => {
       bottomBall > topStick
     ) {
       // add angle to the ball
-      const middleStick = stick.getX() + stick.getWidth() / 2;
-      const angle = (ball.getX() - middleStick) / stick.getWidth();
+      const middleStick = vaus.getX() + vaus.getWidth() / 2;
+      const angle = (ball.getX() - middleStick) / vaus.getWidth();
       ball.setDx(20 * angle);
       ball.setDy(-ball.getDy());
     } else if (bottomBall > canvasHeight) {
@@ -104,19 +104,19 @@ const runGame = () => {
       document.location.reload();
     }
 
-    // check collision with bricks
+    // check collision with blocks
     for (let c = 0; c < level.getBrickColumnCount(); c++) {
       for (let r = 0; r < level.getBrickRowCount(); r++) {
-        const brick = level.getBrick(c, r);
-        if (brick.getStatus() === 1) {
+        const block = level.getBrick(c, r);
+        if (block.getStatus() === 1) {
           if (
-            ball.getX() > brick.getX() &&
-            ball.getX() < brick.getX() + level.getBrickWidth() &&
-            ball.getY() > brick.getY() &&
-            ball.getY() < brick.getY() + level.getBrickHeight()
+            ball.getX() > block.getX() &&
+            ball.getX() < block.getX() + level.getBrickWidth() &&
+            ball.getY() > block.getY() &&
+            ball.getY() < block.getY() + level.getBrickHeight()
           ) {
             ball.setDy(-ball.getDy());
-            brick.setStatus(0);
+            block.setStatus(0);
             score++;
           }
         }

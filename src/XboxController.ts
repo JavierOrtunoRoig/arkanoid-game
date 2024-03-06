@@ -1,4 +1,4 @@
-import { Stick } from './Stick';
+import { Stick } from './Vaus';
 
 export class XboxController {
   #gamepadConnected = false;

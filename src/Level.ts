@@ -1,34 +1,28 @@
-import { Brick } from './Brick';
+import { Block } from './Block';
 import { CanvasRenderingContext2D } from './Canvas';
 
 export class Level {
-  #bricksColor = '#A5C9CA';
-  #bricks: Brick[][] = [];
+  #blocks: Block[][] = [];
   #brickRowCount = 5;
-  #brickColumnCount = 3;
-  #extraSpace: number;
+  #brickColumnCount = 11;
   #brickOffsetLeft: number;
   #brickWidth;
   #brickHeight;
-  #brickPadding = 3;
-  #brickOffsetTop = 30;
+  #brickOffsetTop = 64;
   // const brickOffsetLeft = 30;
 
-  constructor(canvasWidth: number, brickWidth = 150, brickHeight = 50) {
+  constructor(brickWidth = 32, brickHeight = 16) {
     this.#brickWidth = brickWidth;
     this.#brickHeight = brickHeight;
-    this.#extraSpace =
-      canvasWidth -
-      this.#brickColumnCount * (this.#brickWidth + this.#brickPadding) -
-      this.#brickPadding;
-    this.#brickOffsetLeft = this.#extraSpace / 2;
-    // this.#brickOffsetLeft = 0;
-    console.log({ extraSpace: this.#extraSpace });
+    // this.#brickOffsetLeft = this.#extraSpace / 2;
+    this.#brickOffsetLeft = 64; // dos bloques de 32px
 
     for (let c = 0; c < this.#brickColumnCount; c++) {
-      this.#bricks[c] = [];
+      this.#blocks[c] = [];
       for (let r = 0; r < this.#brickRowCount; r++) {
-        this.#bricks[c][r] = new Brick(0, 0, 1);
+        const brickX = c * this.#brickWidth + this.#brickOffsetLeft;
+        const brickY = r * this.#brickHeight + this.#brickOffsetTop;
+        this.#blocks[c][r] = new Block(brickX, brickY, 1);
       }
     }
   }
@@ -36,15 +30,8 @@ export class Level {
   draw(ctx: CanvasRenderingContext2D) {
     for (let c = 0; c < this.#brickColumnCount; c++) {
       for (let r = 0; r < this.#brickRowCount; r++) {
-        if (this.#bricks[c][r].getStatus() === 1) {
-          const brickX =
-            c * (this.#brickWidth + this.#brickPadding) + this.#brickOffsetLeft;
-          const brickY =
-            r * (this.#brickHeight + this.#brickPadding) + this.#brickOffsetTop;
-          this.#bricks[c][r].setX(brickX);
-          this.#bricks[c][r].setY(brickY);
-          ctx.fillStyle = this.#bricksColor;
-          ctx.fillRect(brickX, brickY, this.#brickWidth, this.#brickHeight);
+        if (this.#blocks[c][r].getStatus() === 1) {
+          this.#blocks[c][r].draw(ctx);
         }
       }
     }
@@ -59,7 +46,7 @@ export class Level {
   }
 
   getBrick(c: number, r: number) {
-    return this.#bricks[c][r];
+    return this.#blocks[c][r];
   }
 
   getBrickWidth() {

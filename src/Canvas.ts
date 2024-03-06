@@ -23,6 +23,8 @@ export interface CanvasRenderingContext2D
   readonly canvas: HTMLCanvasElement;
 }
 
+const HEIGHT = 500;
+
 export class Canvas {
   // #PIXEL_RATIO: number;
   #canvas: HTMLCanvasElement;
@@ -35,8 +37,8 @@ export class Canvas {
   #framesPerSec: number;
   #msFPSPrev: number;
 
-  constructor(width: number, height: number) {
-    this.#canvas = this.createHiDPICanvas(width, height);
+  constructor(width: number) {
+    this.#canvas = this.createHiDPICanvas(width, HEIGHT);
     this.#ctx = this.#canvas.getContext(
       '2d'
     ) as unknown as CanvasRenderingContext2D;
