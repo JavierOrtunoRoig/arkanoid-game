@@ -89,11 +89,21 @@ const runGame = () => {
       lefBall <= rightStick &&
       bottomBall > topStick
     ) {
-      // add angle to the ball
-      const middleStick = vaus.getX() + vaus.getWidth() / 2;
-      const angle = (ball.getX() - middleStick) / vaus.getWidth();
-      ball.setDx(20 * angle);
-      ball.setDy(-ball.getDy());
+      // Calculate the hit position relative to the width of the vaus
+      const hitPosition = (ball.getX() - leftStick) / vaus.getWidth();
+
+      // Define the maximum angle deviation you want
+      const maxAngleDeviation = Math.PI / 3; // 60 degrees
+
+      // Calculate the angle within the allowed deviation
+      const angle = maxAngleDeviation * (2 * hitPosition - 1);
+
+      // Apply the angle to the velocity components
+      const speed = Math.sqrt(
+        ball.getDx() * ball.getDx() + ball.getDy() * ball.getDy()
+      );
+      ball.setDx(speed * Math.sin(angle));
+      ball.setDy(-speed * Math.cos(angle));
     } else if (bottomBall > canvasHeight) {
       gameOver = true;
       mainThemeAudio.pause();

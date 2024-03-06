@@ -1,6 +1,6 @@
 import { CanvasRenderingContext2D } from './Canvas';
 
-const VELOCITY = 8;
+const VELOCITY = 3;
 
 export class Ball {
   #color = '#FFF';
