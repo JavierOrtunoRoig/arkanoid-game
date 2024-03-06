@@ -1,12 +1,12 @@
-import { Stick } from './Vaus';
+import { Vaus } from './Vaus';
 
 export class XboxController {
   #gamepadConnected = false;
-  #stick: Stick;
+  #stick: Vaus;
   /** If it's true then the movement has been reseted and we won't reset it again until controlled being used */
   #isCleaned = false;
 
-  constructor(stick: Stick) {
+  constructor(stick: Vaus) {
     this.#setEvents();
     this.#stick = stick;
   }
