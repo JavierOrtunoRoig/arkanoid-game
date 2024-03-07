@@ -117,7 +117,6 @@ export class Canvas {
   }
 
   getElementPosition() {
-    console.log('object');
     return this.#canvas.getBoundingClientRect();
   }
 }

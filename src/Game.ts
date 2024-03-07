@@ -101,8 +101,26 @@ export class Game {
           this.#gameOver = true;
           this.#mainThemeAudio.pause();
           this.#gameOverAudio.play();
-          alert(`GAME OVER. Your score is: ${this.#score}`);
-          document.location.reload();
+
+          document.body.removeChild(this.#canvas.getCanvas());
+
+          const titlesContainer = document.createElement('div');
+          titlesContainer.style.display = 'flex';
+          titlesContainer.style.flexDirection = 'column';
+          titlesContainer.style.justifyContent = 'center';
+          titlesContainer.style.alignItems = 'center';
+
+          const loseTitle = document.createElement('h1');
+          loseTitle.innerText = 'GAME OVER!';
+          loseTitle.style.color = 'cyan';
+          titlesContainer.appendChild(loseTitle);
+
+          const score = document.createElement('h2');
+          score.innerText = `Your score is: ${this.#score}`;
+          score.style.color = 'cyan';
+          titlesContainer.appendChild(score);
+
+          document.body.appendChild(titlesContainer);
         } else {
           this.#ball = new Ball(
             this.#vaus.getX() + this.#vaus.getWidth() / 2,
