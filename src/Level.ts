@@ -3,8 +3,8 @@ import { CanvasRenderingContext2D } from './Canvas';
 
 export class Level {
   #blocks: Block[][] = [];
-  #brickRowCount = 2;
-  #brickColumnCount = 1;
+  #brickRowCount = 5;
+  #brickColumnCount = 11;
   #brickOffsetLeft: number;
   #brickWidth;
   #brickHeight;

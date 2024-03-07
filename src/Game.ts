@@ -17,7 +17,7 @@ export class Game {
   #ball;
   #xboxGamepad;
   #level;
-  #numberOfBricks = 2;
+  #numberOfBricks = 55;
 
   #gameOver = false;
   #score = 0;
@@ -147,41 +147,49 @@ export class Game {
           const block = this.#level.getBrick(c, r);
           if (block.getStatus() === 1) {
             if (
-              this.#ball.getX() > block.getX() &&
-              this.#ball.getX() < block.getX() + this.#level.getBrickWidth() &&
-              this.#ball.getY() > block.getY() &&
-              this.#ball.getY() < block.getY() + this.#level.getBrickHeight()
+              this.#ball.getX() + this.#ball.getRadius() > block.getX() &&
+              this.#ball.getX() - this.#ball.getRadius() <
+                block.getX() + this.#level.getBrickWidth() &&
+              this.#ball.getY() + this.#ball.getRadius() > block.getY() &&
+              this.#ball.getY() - this.#ball.getRadius() <
+                block.getY() + this.#level.getBrickHeight()
             ) {
               this.#ball.setDy(-this.#ball.getDy());
               this.#numberOfBricks = block.hit(this.#numberOfBricks);
               this.#score++;
               if (this.#numberOfBricks === 0) {
-                this.#gameOver = true;
-                this.#mainThemeAudio.pause();
-                document.body.removeChild(this.#canvas.getCanvas());
-
-                const titlesContainer = document.createElement('div');
-                titlesContainer.style.display = 'flex';
-                titlesContainer.style.flexDirection = 'column';
-                titlesContainer.style.justifyContent = 'center';
-                titlesContainer.style.alignItems = 'center';
-
-                const winTitle = document.createElement('h1');
-                winTitle.innerText = 'YOU WIN!';
-                winTitle.style.color = 'cyan';
-                titlesContainer.appendChild(winTitle);
-
-                const score = document.createElement('h2');
-                score.innerText = `Your score is: ${this.#score}`;
-                score.style.color = 'cyan';
-                titlesContainer.appendChild(score);
-
-                document.body.appendChild(titlesContainer);
+                winGame();
               }
+              return;
             }
           }
         }
       }
+    };
+
+    const winGame = () => {
+      this.#gameOver = true;
+      this.#mainThemeAudio.pause();
+      document.body.removeChild(this.#canvas.getCanvas());
+
+      const titlesContainer = document.createElement('div');
+      titlesContainer.style.display = 'flex';
+      titlesContainer.style.flexDirection = 'column';
+      titlesContainer.style.justifyContent = 'center';
+      titlesContainer.style.alignItems = 'center';
+
+      const winTitle = document.createElement('h1');
+      winTitle.innerText = 'YOU WON!';
+      winTitle.style.color = 'cyan';
+      titlesContainer.appendChild(winTitle);
+
+      const score = document.createElement('h2');
+      score.innerText = `Your score is: ${this.#score}`;
+      score.style.color = 'cyan';
+      titlesContainer.appendChild(score);
+
+      document.body.appendChild(titlesContainer);
+      this.#mainThemeAudio.pause();
     };
 
     draw();
