@@ -28,7 +28,7 @@ const SPRITES: Sprite[] = [
 const bottomOffset = 16;
 
 export class Vaus {
-  #velocity = 10;
+  #velocity = 5;
   #moveLeft = false;
   #moveRight = false;
   #x: number;

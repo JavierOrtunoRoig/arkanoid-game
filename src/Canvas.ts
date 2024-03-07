@@ -25,10 +25,10 @@ export interface CanvasRenderingContext2D
   readonly canvas: HTMLCanvasElement;
 }
 
-const HEIGHT = 500;
+const WIDTH = 480;
+const HEIGHT = 480;
 
 export class Canvas {
-  // #PIXEL_RATIO: number;
   #canvas: HTMLCanvasElement;
   #ctx: CanvasRenderingContext2D;
   #scoreColor = '#E7F6F2';
@@ -39,8 +39,8 @@ export class Canvas {
   #msFPSPrev: number;
   #lives = Lives.getInstance();
 
-  constructor(width: number) {
-    this.#canvas = this.createHiDPICanvas(width, HEIGHT);
+  constructor() {
+    this.#canvas = this.createHiDPICanvas(WIDTH, HEIGHT);
     this.#ctx = this.#canvas.getContext(
       '2d'
     ) as unknown as CanvasRenderingContext2D;

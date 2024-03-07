@@ -4,16 +4,13 @@ import { Level } from './Level';
 import { Lives } from './Lives';
 import { Vaus } from './Vaus';
 import { XboxController } from './XboxController';
+import { GameOverAudio } from './audios/GameOverQuery';
+import { MainThemeAudio } from './audios/MainTheme';
 import { $ } from './helpers';
 import './style.css';
 
 let gameOver = false;
 let score = 0;
-
-let width = 480;
-if (window.innerWidth < 480) {
-  width = window.innerWidth;
-}
 
 const startButton = $('#start-button') as HTMLButtonElement;
 startButton.addEventListener('click', () => {
@@ -21,37 +18,18 @@ startButton.addEventListener('click', () => {
   runGame();
 });
 
-const mainThemeAudio = $('#main-theme') as HTMLAudioElement;
-mainThemeAudio.volume = 0.5;
-
-document.addEventListener('keydown', () => {
-  mainThemeAudio.play();
-  mainThemeAudio.loop = true;
-});
-
-document.addEventListener('click', () => {
-  mainThemeAudio.play();
-  mainThemeAudio.loop = true;
-});
-
-const gameOverAudio = $('#game-over') as HTMLAudioElement;
-gameOverAudio.volume = 0.5;
-
 const runGame = () => {
-  const canvas = new Canvas(width);
+  const canvas = new Canvas();
   const canvasWidth = canvas.getWidth();
   const canvasHeight = canvas.getHeight();
+
+  const mainThemeAudio = new MainThemeAudio();
+  const gameOverAudio = new GameOverAudio();
 
   const vaus = new Vaus(canvas.getCtx(), canvasWidth, canvasHeight);
   let ball = new Ball(vaus.getX() + vaus.getWidth() / 2, vaus.getY() - 11);
   const xboxGamepad = new XboxController(vaus);
   const level = new Level();
-
-  // if (window.innerWidth < 480) {
-  //   level = new Level(60, 20);
-  // } else {
-  //   level = new Level(width);
-  // }
 
   function draw() {
     if (gameOver) return;
@@ -103,13 +81,12 @@ const runGame = () => {
       );
       ball.setDx(speed * Math.sin(angle));
       ball.setDy(-speed * Math.cos(angle));
-    } else if (bottomBall > topStick) {
+    } else if (bottomBall > topStick + 16) {
       const lives = Lives.getInstance();
       lives.decreaseLives();
       if (lives.getLives() === 0) {
         gameOver = true;
         mainThemeAudio.pause();
-        mainThemeAudio.currentTime = 0;
         gameOverAudio.play();
         alert(`GAME OVER. Your score is: ${score}`);
         document.location.reload();
