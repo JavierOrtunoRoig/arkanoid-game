@@ -45,7 +45,12 @@ export class Block {
     return this.#status;
   }
 
-  hit() {
+  /**
+   * Hit the block, change the status and return the number of bricks on the level
+   * @param numberOfBricks - number of bricks on the level
+   * @returns number of bricks on the level after the hit
+   */
+  hit(numberOfBricks: number) {
     if (this.#isGold) {
       this.#blockNumber = 8;
       this.#isGold = false;
@@ -55,7 +60,9 @@ export class Block {
       this.#isSilver = false;
     } else {
       this.#status = 0;
+      numberOfBricks--;
     }
+    return numberOfBricks;
   }
 
   draw(ctx: CanvasRenderingContext2D) {

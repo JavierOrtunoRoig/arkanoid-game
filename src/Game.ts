@@ -17,6 +17,7 @@ export class Game {
   #ball;
   #xboxGamepad;
   #level;
+  #numberOfBricks = 2;
 
   #gameOver = false;
   #score = 0;
@@ -77,59 +78,70 @@ export class Game {
         lefBall <= rightStick &&
         bottomBall > topStick;
       if (ballHitVaus) {
-        // Calculate the hit position relative to the width of the vaus
-        const hitPosition =
-          (this.#ball.getX() - leftStick) / this.#vaus.getWidth();
-
-        // Define the maximum angle deviation you want
-        const maxAngleDeviation = Math.PI / 3; // 60 degrees
-
-        // Calculate the angle within the allowed deviation
-        const angle = maxAngleDeviation * (2 * hitPosition - 1);
-
-        // Apply the angle to the velocity components
-        const speed = Math.sqrt(
-          this.#ball.getDx() * this.#ball.getDx() +
-            this.#ball.getDy() * this.#ball.getDy()
-        );
-        this.#ball.setDx(speed * Math.sin(angle));
-        this.#ball.setDy(-speed * Math.cos(angle));
+        ballCollisionWithVaus(leftStick);
       } else if (bottomBall > topStick + 16) {
-        const lives = Lives.getInstance();
-        lives.decreaseLives();
-        if (lives.getLives() === 0) {
-          this.#gameOver = true;
-          this.#mainThemeAudio.pause();
-          this.#gameOverAudio.play();
-
-          document.body.removeChild(this.#canvas.getCanvas());
-
-          const titlesContainer = document.createElement('div');
-          titlesContainer.style.display = 'flex';
-          titlesContainer.style.flexDirection = 'column';
-          titlesContainer.style.justifyContent = 'center';
-          titlesContainer.style.alignItems = 'center';
-
-          const loseTitle = document.createElement('h1');
-          loseTitle.innerText = 'GAME OVER!';
-          loseTitle.style.color = 'cyan';
-          titlesContainer.appendChild(loseTitle);
-
-          const score = document.createElement('h2');
-          score.innerText = `Your score is: ${this.#score}`;
-          score.style.color = 'cyan';
-          titlesContainer.appendChild(score);
-
-          document.body.appendChild(titlesContainer);
-        } else {
-          this.#ball = new Ball(
-            this.#vaus.getX() + this.#vaus.getWidth() / 2,
-            this.#vaus.getY() - 11
-          );
-        }
+        ballColliisonWithBottom();
       }
 
-      // check collision with blocks
+      ballCollisionWithBlocks();
+    };
+
+    const ballCollisionWithVaus = (leftStick: number) => {
+      // Calculate the hit position relative to the width of the vaus
+      const hitPosition =
+        (this.#ball.getX() - leftStick) / this.#vaus.getWidth();
+
+      // Define the maximum angle deviation you want
+      const maxAngleDeviation = Math.PI / 3; // 60 degrees
+
+      // Calculate the angle within the allowed deviation
+      const angle = maxAngleDeviation * (2 * hitPosition - 1);
+
+      // Apply the angle to the velocity components
+      const speed = Math.sqrt(
+        this.#ball.getDx() * this.#ball.getDx() +
+          this.#ball.getDy() * this.#ball.getDy()
+      );
+      this.#ball.setDx(speed * Math.sin(angle));
+      this.#ball.setDy(-speed * Math.cos(angle));
+    };
+
+    const ballColliisonWithBottom = () => {
+      const lives = Lives.getInstance();
+      lives.decreaseLives();
+      if (lives.getLives() === 0) {
+        this.#gameOver = true;
+        this.#mainThemeAudio.pause();
+        this.#gameOverAudio.play();
+
+        document.body.removeChild(this.#canvas.getCanvas());
+
+        const titlesContainer = document.createElement('div');
+        titlesContainer.style.display = 'flex';
+        titlesContainer.style.flexDirection = 'column';
+        titlesContainer.style.justifyContent = 'center';
+        titlesContainer.style.alignItems = 'center';
+
+        const loseTitle = document.createElement('h1');
+        loseTitle.innerText = 'GAME OVER!';
+        loseTitle.style.color = 'cyan';
+        titlesContainer.appendChild(loseTitle);
+
+        const score = document.createElement('h2');
+        score.innerText = `Your score is: ${this.#score}`;
+        score.style.color = 'cyan';
+        titlesContainer.appendChild(score);
+
+        document.body.appendChild(titlesContainer);
+      } else {
+        this.#ball = new Ball(
+          this.#vaus.getX() + this.#vaus.getWidth() / 2,
+          this.#vaus.getY() - 11
+        );
+      }
+    };
+
+    const ballCollisionWithBlocks = () => {
       for (let c = 0; c < this.#level.getBrickColumnCount(); c++) {
         for (let r = 0; r < this.#level.getBrickRowCount(); r++) {
           const block = this.#level.getBrick(c, r);
@@ -141,8 +153,31 @@ export class Game {
               this.#ball.getY() < block.getY() + this.#level.getBrickHeight()
             ) {
               this.#ball.setDy(-this.#ball.getDy());
-              block.hit();
+              this.#numberOfBricks = block.hit(this.#numberOfBricks);
               this.#score++;
+              if (this.#numberOfBricks === 0) {
+                this.#gameOver = true;
+                this.#mainThemeAudio.pause();
+                document.body.removeChild(this.#canvas.getCanvas());
+
+                const titlesContainer = document.createElement('div');
+                titlesContainer.style.display = 'flex';
+                titlesContainer.style.flexDirection = 'column';
+                titlesContainer.style.justifyContent = 'center';
+                titlesContainer.style.alignItems = 'center';
+
+                const winTitle = document.createElement('h1');
+                winTitle.innerText = 'YOU WIN!';
+                winTitle.style.color = 'cyan';
+                titlesContainer.appendChild(winTitle);
+
+                const score = document.createElement('h2');
+                score.innerText = `Your score is: ${this.#score}`;
+                score.style.color = 'cyan';
+                titlesContainer.appendChild(score);
+
+                document.body.appendChild(titlesContainer);
+              }
             }
           }
         }
