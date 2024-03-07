@@ -52,13 +52,15 @@ export class Ball {
   }
 
   moveBall(canvasWidth: number) {
-    if (
+    const hitHorizontalWall =
       this.#X + this.#dx > canvasWidth - this.#radius ||
-      this.#X + this.#dx < this.#radius
-    ) {
+      this.#X + this.#dx < this.#radius;
+    const hitVerticalWall = this.#Y + this.#dy < this.#radius;
+
+    if (hitHorizontalWall) {
       this.#dx *= -1;
     }
-    if (this.#Y + this.#dy < this.#radius) {
+    if (hitVerticalWall) {
       this.#dy *= -1;
     }
 

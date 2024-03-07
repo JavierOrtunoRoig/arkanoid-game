@@ -1,6 +1,10 @@
 import { CanvasRenderingContext2D } from './Canvas';
 import { $ } from './helpers';
 
+const NUMBER_OF_BLOCKS_IN_SPRITE = 10;
+const SPRITE_WIDTH = 32;
+const SPRITE_HEIGHT = 16;
+
 export class Block {
   #x = -1;
   #y = -1;
@@ -14,7 +18,7 @@ export class Block {
     this.#status = status;
     this.#$blocks = $('blocks') as unknown as HTMLImageElement;
     // get random block from 10 of the sprite
-    this.#blockNumber = Math.floor(Math.random() * 10);
+    this.#blockNumber = Math.floor(Math.random() * NUMBER_OF_BLOCKS_IN_SPRITE);
   }
 
   getX() {
@@ -51,14 +55,14 @@ export class Block {
 
     ctx.drawImage(
       this.#$blocks,
-      this.#blockNumber * 32,
+      this.#blockNumber * SPRITE_WIDTH,
       0,
-      32,
-      16,
+      SPRITE_WIDTH,
+      SPRITE_HEIGHT,
       this.#x,
       this.#y,
-      32,
-      16
+      SPRITE_WIDTH,
+      SPRITE_HEIGHT
     );
   }
 }

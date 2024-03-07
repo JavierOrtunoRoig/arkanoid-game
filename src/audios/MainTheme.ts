@@ -5,7 +5,6 @@ const mainThemeQuery = '#main-theme';
 export class MainThemeAudio extends AbstractAudio {
   constructor() {
     super(mainThemeQuery);
-    this.audio.volume = 0.5;
 
     this.#setEvents();
   }

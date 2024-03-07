@@ -47,7 +47,7 @@ export class Vaus {
     this.#image = new Image();
     this.#image.src = this.#getActualSprite().src;
     this.#image.onload = () => {
-      // Dibujar la imagen solo después de que se haya cargado correctamente
+      // draw the image only after it has been loaded correctly
       this.draw(ctx);
     };
   }
@@ -118,7 +118,6 @@ export class Vaus {
   }
 
   #getActualSprite() {
-    console.log({ lives: this.#lives.getLives() });
     return SPRITES[this.#lives.getLives() - 1];
   }
 

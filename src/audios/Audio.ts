@@ -5,6 +5,7 @@ export abstract class AbstractAudio {
 
   constructor(query: string) {
     this.audio = document.querySelector(query) as HTMLAudioElement;
+    this.audio.volume = 0.5;
   }
 
   play() {

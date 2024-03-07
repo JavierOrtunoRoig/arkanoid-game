@@ -9,13 +9,11 @@ export class Level {
   #brickWidth;
   #brickHeight;
   #brickOffsetTop = 64;
-  // const brickOffsetLeft = 30;
 
   constructor(brickWidth = 32, brickHeight = 16) {
     this.#brickWidth = brickWidth;
     this.#brickHeight = brickHeight;
-    // this.#brickOffsetLeft = this.#extraSpace / 2;
-    this.#brickOffsetLeft = 64; // dos bloques de 32px
+    this.#brickOffsetLeft = 64; // two blocks of 32px
 
     for (let c = 0; c < this.#brickColumnCount; c++) {
       this.#blocks[c] = [];

@@ -31,7 +31,7 @@ const HEIGHT = 480;
 export class Canvas {
   #canvas: HTMLCanvasElement;
   #ctx: CanvasRenderingContext2D;
-  #scoreColor = '#E7F6F2';
+  #textColor = '#E7F6F2';
   #msPrev: number;
   #msPerFrame: number;
   #frames: number;
@@ -57,9 +57,9 @@ export class Canvas {
   createHiDPICanvas(w: number, h: number): HTMLCanvasElement {
     const canvas = document.createElement('canvas');
     document.body.insertBefore(canvas, document.body.childNodes[0]);
-    canvas.width = w; //* ratio;
-    canvas.height = h; //* ratio;
-    canvas.getContext('2d'); // ?.setTransform(ratio, 0, 0, ratio, 0, 0);
+    canvas.width = w;
+    canvas.height = h;
+    canvas.getContext('2d');
     return canvas;
   }
 
@@ -68,7 +68,7 @@ export class Canvas {
   }
 
   drawUI(framesPerSec: number, score: number) {
-    this.#ctx.fillStyle = this.#scoreColor;
+    this.#ctx.fillStyle = this.#textColor;
     this.#ctx.font = '12px Arial';
     this.#ctx.fillText(`FPS: ${framesPerSec}`, 5, 15);
     this.#ctx.fillText(`Score: ${score}`, 5, 30);
