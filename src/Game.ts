@@ -26,6 +26,7 @@ export class Game {
     this.#gameOverAudio = new GameOverAudio();
 
     this.#vaus = new Vaus(
+      this.#canvas,
       this.#canvas.getCtx(),
       this.#canvasWidth,
       this.#canvasHeight

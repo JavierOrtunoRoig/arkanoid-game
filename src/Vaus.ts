@@ -1,4 +1,4 @@
-import { CanvasRenderingContext2D } from './Canvas';
+import { Canvas, CanvasRenderingContext2D } from './Canvas';
 import { Lives } from './Lives';
 
 interface Sprite {
@@ -37,13 +37,14 @@ export class Vaus {
   #lives: Lives = Lives.getInstance();
 
   constructor(
+    canvas: Canvas,
     ctx: CanvasRenderingContext2D,
     canvasWidth: number,
     canvasHeight: number
   ) {
     this.#x = (canvasWidth - this.getWidth()) / 2;
     this.#y = canvasHeight - this.getHeight() - bottomOffset;
-    this.setEvents();
+    this.setEvents(canvas);
     this.#image = new Image();
     this.#image.src = this.#getActualSprite().src;
     this.#image.onload = () => {
@@ -52,7 +53,7 @@ export class Vaus {
     };
   }
 
-  setEvents() {
+  setEvents(canvas: Canvas) {
     document.addEventListener('keydown', (event) => {
       if (event.key === 'ArrowRight') {
         this.#moveRight = true;
@@ -78,6 +79,18 @@ export class Vaus {
         touch.clientX < window.innerWidth - this.getWidth() / 2
       ) {
         this.#x = touch.clientX - this.getWidth() / 2;
+      }
+    });
+
+    // get actual position of the mouse in the canvas and move the stick to left or right
+    document.addEventListener('mousemove', (event) => {
+      const { left, right } = canvas.getElementPosition();
+      const mouseX = event.clientX - left;
+      if (
+        mouseX > this.getWidth() / 2 &&
+        mouseX < right - this.getWidth() / 2
+      ) {
+        this.#x = mouseX - this.getWidth() / 2;
       }
     });
   }

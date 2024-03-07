@@ -45,6 +45,8 @@ export class Canvas {
       '2d'
     ) as unknown as CanvasRenderingContext2D;
 
+    this.#canvas.style.cursor = 'none';
+
     const fps = 60;
 
     this.#msPrev = window.performance.now();
@@ -112,5 +114,10 @@ export class Canvas {
 
   getHeight() {
     return this.#canvas.height;
+  }
+
+  getElementPosition() {
+    console.log('object');
+    return this.#canvas.getBoundingClientRect();
   }
 }
