@@ -86,10 +86,11 @@ export class Vaus {
     document.addEventListener('mousemove', (event) => {
       const { left, right } = canvas.getElementPosition();
       const mouseX = event.clientX - left;
-      if (
-        mouseX > this.getWidth() / 2 &&
-        mouseX < right - this.getWidth() / 2
-      ) {
+      // vairbale to mouseX > this.getWidth() / 2 && mouseX < right - this.getWidth() / 2;
+      const isMouseXInCanvas =
+        mouseX > this.getWidth() / 2 && mouseX < right - this.getWidth() / 2;
+      const vausIsNotOverflowing = event.clientX < right - this.getWidth() / 2;
+      if (isMouseXInCanvas && vausIsNotOverflowing) {
         this.#x = mouseX - this.getWidth() / 2;
       }
     });
