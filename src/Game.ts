@@ -123,7 +123,7 @@ export class Game {
               this.#ball.getY() < block.getY() + this.#level.getBrickHeight()
             ) {
               this.#ball.setDy(-this.#ball.getDy());
-              block.setStatus(0);
+              block.hit();
               this.#score++;
             }
           }

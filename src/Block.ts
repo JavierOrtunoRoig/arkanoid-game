@@ -11,6 +11,8 @@ export class Block {
   #status = -1;
   #$blocks;
   #blockNumber;
+  #isSilver;
+  #isGold;
 
   constructor(x: number, y: number, status: number) {
     this.#x = x;
@@ -19,6 +21,8 @@ export class Block {
     this.#$blocks = $('blocks') as unknown as HTMLImageElement;
     // get random block from 10 of the sprite
     this.#blockNumber = Math.floor(Math.random() * NUMBER_OF_BLOCKS_IN_SPRITE);
+    this.#isSilver = this.#blockNumber === 8;
+    this.#isGold = this.#blockNumber === 9;
   }
 
   getX() {
@@ -41,8 +45,17 @@ export class Block {
     return this.#status;
   }
 
-  setStatus(status: number) {
-    this.#status = status;
+  hit() {
+    if (this.#isGold) {
+      this.#blockNumber = 8;
+      this.#isGold = false;
+      this.#isSilver = true;
+    } else if (this.#isSilver) {
+      this.#blockNumber = Math.floor(Math.random() * 8);
+      this.#isSilver = false;
+    } else {
+      this.#status = 0;
+    }
   }
 
   draw(ctx: CanvasRenderingContext2D) {
