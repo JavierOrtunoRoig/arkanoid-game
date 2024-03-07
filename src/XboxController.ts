@@ -1,3 +1,4 @@
+import Toastify from 'toastify-js';
 import { Vaus } from './Vaus';
 
 export class XboxController {
@@ -14,7 +15,14 @@ export class XboxController {
   #setEvents() {
     window.addEventListener('gamepadconnected', (e) => {
       const event = e as GamepadEvent;
-      console.log('gamepad connected', event.gamepad.id);
+      Toastify({
+        text: `Gamepad connected: ${event.gamepad.id}`,
+        duration: 1000000,
+        backgroundColor: 'linear-gradient(to right, #00b09b, #96c93d)',
+        style: {
+          position: 'absolute'
+        }
+      }).showToast();
       this.#gamepadConnected = true;
     });
   }
