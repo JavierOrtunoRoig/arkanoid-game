@@ -30,8 +30,10 @@ body {
   gap: 1rem;
 
   h1 {
-    font-size: 3rem;
-    font-weight: 600;
+    font-family: 'Arkanoid-Regular';
+    font-size: 5rem;
+    padding: 0;
+    margin: 0;
   }
 
   button {
@@ -48,6 +50,10 @@ canvas {
   background: url(/background.png) repeat;
 }
 
+@font-face {
+  font-family: 'Arkanoid-Regular';
+  src: url('/Arkanoid_Regular.ttf ');
+}
 
 @media (prefers-color-scheme: light) {
   :root {
