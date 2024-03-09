@@ -35,6 +35,8 @@ export class Vaus {
   #y: number;
   #image: HTMLImageElement;
   #lives: Lives = Lives.getInstance();
+  #canvas: Canvas;
+  #onMouseMoveHandler = this.#onMouseMove.bind(this);
 
   constructor(
     canvas: Canvas,
@@ -42,9 +44,10 @@ export class Vaus {
     canvasWidth: number,
     canvasHeight: number
   ) {
+    this.#canvas = canvas;
     this.#x = (canvasWidth - this.getWidth()) / 2;
     this.#y = canvasHeight - this.getHeight() - bottomOffset;
-    this.setEvents(canvas);
+    this.setEvents();
     this.#image = new Image();
     this.#image.src = this.#getActualSprite().src;
     this.#image.onload = () => {
@@ -53,7 +56,7 @@ export class Vaus {
     };
   }
 
-  setEvents(canvas: Canvas) {
+  setEvents() {
     document.addEventListener('keydown', (event) => {
       if (event.key === 'ArrowRight') {
         this.#moveRight = true;
@@ -83,17 +86,22 @@ export class Vaus {
     });
 
     // get actual position of the mouse in the canvas and move the stick to left or right
-    document.addEventListener('mousemove', (event) => {
-      const { left, right } = canvas.getElementPosition();
-      const mouseX = event.clientX - left;
-      // vairbale to mouseX > this.getWidth() / 2 && mouseX < right - this.getWidth() / 2;
-      const isMouseXInCanvas =
-        mouseX > this.getWidth() / 2 && mouseX < right - this.getWidth() / 2;
-      const vausIsNotOverflowing = event.clientX < right - this.getWidth() / 2;
-      if (isMouseXInCanvas && vausIsNotOverflowing) {
-        this.#x = mouseX - this.getWidth() / 2;
-      }
-    });
+    document.addEventListener('mousemove', this.#onMouseMoveHandler);
+  }
+
+  #onMouseMove(event: MouseEvent) {
+    const { left, right } = this.#canvas.getElementPosition();
+    const mouseX = event.clientX - left;
+    const isMouseXInCanvas =
+      mouseX > this.getWidth() / 2 && mouseX < right - this.getWidth() / 2;
+    const vausIsNotOverflowing = event.clientX < right - this.getWidth() / 2;
+    if (isMouseXInCanvas && vausIsNotOverflowing) {
+      this.#x = mouseX - this.getWidth() / 2;
+    }
+  }
+
+  removeEvents() {
+    document.removeEventListener('mousemove', this.#onMouseMoveHandler);
   }
 
   getX() {

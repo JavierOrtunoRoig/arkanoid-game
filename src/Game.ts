@@ -80,7 +80,7 @@ export class Game {
       if (ballHitVaus) {
         ballCollisionWithVaus(leftStick);
       } else if (bottomBall > topStick + 16) {
-        ballColliisonWithBottom();
+        ballCollisionWithBottom();
       }
 
       ballCollisionWithBlocks();
@@ -106,33 +106,11 @@ export class Game {
       this.#ball.setDy(-speed * Math.cos(angle));
     };
 
-    const ballColliisonWithBottom = () => {
+    const ballCollisionWithBottom = () => {
       const lives = Lives.getInstance();
       lives.decreaseLives();
       if (lives.getLives() === 0) {
-        this.#gameOver = true;
-        this.#mainThemeAudio.pause();
-        this.#gameOverAudio.play();
-
-        document.body.removeChild(this.#canvas.getCanvas());
-
-        const titlesContainer = document.createElement('div');
-        titlesContainer.style.display = 'flex';
-        titlesContainer.style.flexDirection = 'column';
-        titlesContainer.style.justifyContent = 'center';
-        titlesContainer.style.alignItems = 'center';
-
-        const loseTitle = document.createElement('h1');
-        loseTitle.innerText = 'GAME OVER!';
-        loseTitle.style.color = 'cyan';
-        titlesContainer.appendChild(loseTitle);
-
-        const score = document.createElement('h2');
-        score.innerText = `Your score is: ${this.#score}`;
-        score.style.color = 'cyan';
-        titlesContainer.appendChild(score);
-
-        document.body.appendChild(titlesContainer);
+        loseGame();
       } else {
         this.#ball = new Ball(
           this.#vaus.getX() + this.#vaus.getWidth() / 2,
@@ -190,6 +168,35 @@ export class Game {
 
       document.body.appendChild(titlesContainer);
       this.#mainThemeAudio.pause();
+      this.#vaus.removeEvents();
+    };
+
+    const loseGame = () => {
+      this.#gameOver = true;
+      this.#mainThemeAudio.pause();
+      this.#gameOverAudio.play();
+
+      document.body.removeChild(this.#canvas.getCanvas());
+
+      const titlesContainer = document.createElement('div');
+      titlesContainer.style.display = 'flex';
+      titlesContainer.style.flexDirection = 'column';
+      titlesContainer.style.justifyContent = 'center';
+      titlesContainer.style.alignItems = 'center';
+
+      const loseTitle = document.createElement('h1');
+      loseTitle.innerText = 'GAME OVER!';
+      loseTitle.style.color = 'cyan';
+      titlesContainer.appendChild(loseTitle);
+
+      const score = document.createElement('h2');
+      score.innerText = `Your score is: ${this.#score}`;
+      score.style.color = 'cyan';
+      titlesContainer.appendChild(score);
+
+      document.body.appendChild(titlesContainer);
+      console.log('object');
+      this.#vaus.removeEvents();
     };
 
     draw();
