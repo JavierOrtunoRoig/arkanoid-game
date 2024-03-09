@@ -158,12 +158,11 @@ export class Game {
 
       const winTitle = document.createElement('h1');
       winTitle.innerText = 'YOU WON!';
-      winTitle.style.color = 'cyan';
       titlesContainer.appendChild(winTitle);
 
       const score = document.createElement('h2');
+      score.style.fontSize = '2.5rem';
       score.innerText = `Your score is: ${this.#score}`;
-      score.style.color = 'cyan';
       titlesContainer.appendChild(score);
 
       document.body.appendChild(titlesContainer);
@@ -186,16 +185,14 @@ export class Game {
 
       const loseTitle = document.createElement('h1');
       loseTitle.innerText = 'GAME OVER!';
-      loseTitle.style.color = 'cyan';
       titlesContainer.appendChild(loseTitle);
 
       const score = document.createElement('h2');
+      score.style.fontSize = '2.5rem';
       score.innerText = `Your score is: ${this.#score}`;
-      score.style.color = 'cyan';
       titlesContainer.appendChild(score);
 
       document.body.appendChild(titlesContainer);
-      console.log('object');
       this.#vaus.removeEvents();
     };
 
